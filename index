@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1B4332">
+<title>Registro de Treino</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
+<style>
+  :root {
+    --green: #2D6A4F; --green-light: #E8F5E9; --green-dark: #1B4332;
+    --blue: #264653; --blue-light: #E3EFF3;
+    --orange: #C65D3E; --orange-light: #FFF0EB;
+    --text: #1A1A1A; --text-med: #555; --text-light: #999;
+    --bg: #F5F5F5; --card: #fff; --border: #E0E0E0;
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, 'SF Pro Display', 'Segoe UI', sans-serif;
+    background: var(--bg); color: var(--text);
+    max-width: 520px; margin: 0 auto;
+    min-height: 100dvh; padding-bottom: 90px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .header {
+    background: var(--green-dark);
+    padding: 16px 18px 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .header h1 { color: #fff; font-size: 13px; font-weight: 700; letter-spacing: 1.5px; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header .date { color: rgba(255,255,255,.75); font-size: 12px; }
+  .btn-settings {
+    background: rgba(255,255,255,.15); border: none; border-radius: 6px;
+    padding: 5px 9px; color: #fff; font-size: 14px; cursor: pointer;
+  }
+
+  /* Tabs */
+  .tabs { display: flex; background: var(--card); border-bottom: 1px solid var(--border); position: sticky; top: 49px; z-index: 40; }
+  .tab {
+    flex: 1; border: none; padding: 11px 6px 9px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 1px;
+    font-family: inherit; transition: all .2s; background: transparent;
+  }
+  .tab .letter { font-size: 17px; font-weight: 700; }
+  .tab .day { font-size: 10px; opacity: .75; }
+  .tab.active { color: #fff; }
+
+  /* Workout title */
+  .wk-title { text-align: center; font-size: 13px; font-weight: 600; padding: 10px 16px 4px; letter-spacing: .3px; }
+
+  /* Groups & Cards */
+  .content { padding: 0 10px; }
+  .group-header {
+    font-size: 11px; font-weight: 700; padding: 6px 10px;
+    margin-top: 10px; margin-bottom: 5px; border-radius: 6px;
+    border-left: 3px solid; letter-spacing: .8px; text-transform: uppercase;
+  }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 10px 12px; margin-bottom: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .ex-info { flex: 1; min-width: 0; }
+  .ex-name { font-size: 13px; font-weight: 600; line-height: 1.3; margin-bottom: 4px; }
+  .ex-meta { display: flex; align-items: center; gap: 8px; }
+  .badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+  .pause { font-size: 10px; color: var(--text-light); }
+
+  /* Weight input */
+  .weight-col { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex-shrink: 0; }
+  .weight-row { display: flex; align-items: center; gap: 4px; }
+  .weight-input {
+    width: 58px; height: 36px; border: 2px solid var(--border); border-radius: 8px;
+    text-align: center; font-size: 16px; font-weight: 600; color: var(--text);
+    background: var(--bg); outline: none; transition: border-color .2s;
+    font-family: inherit; -webkit-appearance: none; -moz-appearance: textfield;
+  }
+  .weight-input:focus { border-color: var(--green); }
+  .weight-input::placeholder { color: #bbb; font-weight: 400; }
+  .kg { font-size: 11px; color: var(--text-light); }
+  .last-btn {
+    font-size: 10px; color: #888; background: none; border: none;
+    padding: 2px 0; cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; gap: 2px;
+  }
+  .prog-up { color: var(--green); }
+  .prog-down { color: var(--orange); }
+
+  /* History */
+  .history {
+    margin-top: 8px; padding: 8px 10px; background: var(--bg);
+    border-radius: 6px; border-top: 1px solid var(--border);
+  }
+  .hist-label { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+  .hist-grid { display: flex; flex-wrap: wrap; gap: 4px; }
+  .hist-chip {
+    display: flex; align-items: center; gap: 5px; padding: 3px 8px;
+    background: var(--card); border-radius: 4px; font-size: 11px;
+  }
+  .hist-date { color: var(--text-light); font-size: 10px; }
+  .hist-weight { font-weight: 600; }
+  .hist-delta { font-size: 10px; font-weight: 600; }
+
+  /* Save button */
+  .save-btn {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    width: calc(100% - 40px); max-width: 480px; padding: 15px;
+    color: #fff; font-size: 15px; font-weight: 700; font-family: inherit;
+    border: none; border-radius: 14px; cursor: pointer; letter-spacing: .5px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25); transition: opacity .2s;
+    z-index: 30;
+  }
+  .save-btn:active { opacity: .8; }
+
+  /* Toast */
+  .toast {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: #333; color: #fff; padding: 10px 22px; border-radius: 10px;
+    font-size: 13px; font-weight: 500; z-index: 100;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    animation: fadeIn .2s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-8px); } }
+
+  /* Settings panel */
+  .settings {
+    padding: 14px 16px; background: #EFEFEF;
+    border-bottom: 1px solid var(--border);
+  }
+  .settings-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .settings-row .status { font-size: 12px; color: var(--text-med); }
+  .settings-row .count { font-size: 11px; color: var(--text-light); }
+  .set-btn {
+    border: none; border-radius: 8px; padding: 9px 14px;
+    color: #fff; font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: inherit;
+  }
+  .set-btn:active { opacity: .8; }
+  .set-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .import-area {
+    width: 100%; height: 56px; border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px; font-size: 11px; font-family: monospace; resize: none;
+    margin-top: 6px;
+  }
+  .settings .hint { font-size: 10px; color: var(--text-light); margin-top: 8px; line-height: 1.4; }
+
+  /* Clear data */
+  .danger-btn { background: #999 !important; margin-top: 6px; }
+  .danger-btn.confirm { background: #d32f2f !important; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+const WORKOUTS = {
+  A: {
+    title: "Peito + Tríceps", day: "Terça", color: "#2D6A4F", light: "#E8F5E9",
+    groups: [
+      { name: "Peito", exercises: [
+        { id: "chest_press", name: "Supino na máquina", series: "3×12", pause: "60s" },
+        { id: "peck_deck", name: "Voador (Peck Deck)", series: "3×12", pause: "45s" },
+        { id: "incline_press", name: "Supino inclinado (halteres)", series: "3×12", pause: "60s" },
+      ]},
+      { name: "Tríceps", exercises: [
+        { id: "tri_machine", name: "Tríceps na máquina", series: "3×12", pause: "45s" },
+        { id: "tri_pulley", name: "Tríceps pulley (corda)", series: "3×12", pause: "45s" },
+        { id: "tri_testa", name: "Tríceps testa (halteres)", series: "3×12", pause: "45s" },
+      ]},
+    ],
+  },
+  B: {
+    title: "Costas + Bíceps", day: "Quinta", color: "#264653", light: "#E3EFF3",
+    groups: [
+      { name: "Costas", exercises: [
+        { id: "lat_pull", name: "Puxada frontal", series: "3×12", pause: "60s" },
+        { id: "seated_row", name: "Remada sentada (polia)", series: "3×12", pause: "60s" },
+        { id: "hammer_row", name: "Remada articulada (Hammer)", series: "3×12", pause: "60s" },
+        { id: "pullover", name: "Pullover na polia alta", series: "3×12", pause: "45s" },
+      ]},
+      { name: "Bíceps", exercises: [
+        { id: "preacher", name: "Rosca Scott (máquina)", series: "3×12", pause: "45s" },
+        { id: "bicep_curl", name: "Rosca alternada (halteres)", series: "3×12", pause: "45s" },
+        { id: "hammer_curl", name: "Rosca martelo", series: "3×12", pause: "45s" },
+      ]},
+    ],
+  },
+  C: {
+    title: "Pernas + Ombros + Abdômen", day: "Sábado", color: "#C65D3E", light: "#FFF0EB",
+    groups: [
+      { name: "Pernas", exercises: [
+        { id: "leg_ext", name: "Cadeira extensora", series: "3×15", pause: "60s" },
+        { id: "leg_curl", name: "Mesa flexora", series: "3×12", pause: "60s" },
+        { id: "hip_abd", name: "Abdução (máquina)", series: "3×15", pause: "45s" },
+        { id: "hip_add", name: "Adução (máquina)", series: "3×15", pause: "45s" },
+        { id: "calf", name: "Panturrilha sentada", series: "3×15", pause: "45s" },
+      ]},
+      { name: "Ombros", exercises: [
+        { id: "shoulder_press", name: "Desenvolvimento (máquina)", series: "3×12", pause: "60s" },
+        { id: "lat_raise", name: "Elevação lateral", series: "3×15", pause: "45s" },
+      ]},
+      { name: "Abdômen", exercises: [
+        { id: "crunch_m", name: "Abdominal na máquina", series: "3×15", pause: "30s" },
+        { id: "side_plank", name: "Prancha lateral", series: "3×20s/lado", pause: "30s" },
+      ]},
+    ],
+  },
+};
+
+const STORAGE_KEY = "treino_pesos_v1";
+
+// State
+let state = {
+  tab: "A",
+  data: {},
+  weights: {},
+  openHist: null,
+  showSettings: false,
+  showImport: false,
+  toast: null,
+  confirmClear: false,
+};
+
+// Helpers
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+const fmtDate = d => { const p = d.split("-"); return `${p[2]}/${p[1]}`; };
+const clone = o => JSON.parse(JSON.stringify(o));
+
+// Storage
+function loadData() {
+  try { const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : {}; }
+  catch { return {}; }
+}
+function saveData(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); return true; }
+  catch { return false; }
+}
+function countEntries(data) {
+  let n = 0; for (const k in data) n += data[k].length; return n;
+}
+
+// Toast
+function showToast(msg) {
+  state.toast = msg; render();
+  setTimeout(() => { state.toast = null; render(); }, 2500);
+}
+
+// Get exercise data
+function getLast(id) { const e = state.data[id]; return e && e.length ? e[e.length - 1] : null; }
+function getHist(id) { return (state.data[id] || []).slice(-10); }
+function getProg(id) {
+  const e = state.data[id] || [];
+  if (e.length < 2) return null;
+  const l = e[e.length-1].weight, p = e[e.length-2].weight;
+  return l > p ? "up" : l < p ? "down" : "same";
+}
+
+// Actions
+function setTab(t) { state.tab = t; state.openHist = null; state.weights = {}; render(); }
+function setWeight(id, val) { state.weights[id] = val; }
+function toggleHist(id) { state.openHist = state.openHist === id ? null : id; render(); }
+
+function doSave() {
+  const t = today();
+  const wk = WORKOUTS[state.tab];
+  const nd = clone(state.data);
+  let any = false;
+
+  for (const g of wk.groups) {
+    for (const ex of g.exercises) {
+      const v = state.weights[ex.id];
+      if (v && parseFloat(v) > 0) {
+        any = true;
+        if (!nd[ex.id]) nd[ex.id] = [];
+        const w = parseFloat(v);
+        const idx = nd[ex.id].findIndex(e => e.date === t);
+        if (idx >= 0) nd[ex.id][idx] = { date: t, weight: w };
+        else nd[ex.id].push({ date: t, weight: w });
+      }
+    }
+  }
+  if (!any) { showToast("Preencha pelo menos um peso"); return; }
+
+  state.data = nd;
+  const ok = saveData(nd);
+  state.weights = {};
+  showToast(ok ? "✓ Treino salvo!" : "Erro ao salvar");
+}
+
+function doExport() {
+  const json = JSON.stringify(state.data);
+  const encoded = btoa(unescape(encodeURIComponent(json)));
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(encoded).then(() => showToast("✓ Dados copiados!")).catch(() => {
+      prompt("Copie o texto abaixo:", encoded);
+    });
+  } else {
+    prompt("Copie o texto abaixo:", encoded);
+  }
+}
+
+function doImport() {
+  const area = document.getElementById("import-area");
+  if (!area || !area.value.trim()) { showToast("Cole o código exportado"); return; }
+  try {
+    const json = decodeURIComponent(escape(atob(area.value.trim())));
+    const parsed = JSON.parse(json);
+    state.data = parsed;
+    saveData(parsed);
+    state.showImport = false;
+    state.showSettings = false;
+    showToast("✓ Dados importados!");
+  } catch { showToast("Código inválido"); }
+}
+
+function doClear() {
+  if (!state.confirmClear) { state.confirmClear = true; render(); return; }
+  state.data = {};
+  state.weights = {};
+  saveData({});
+  state.confirmClear = false;
+  state.showSettings = false;
+  showToast("Dados apagados");
+}
+
+// Render
+function render() {
+  const wk = WORKOUTS[state.tab];
+  const color = wk.color;
+  const entries = countEntries(state.data);
+
+  let html = `
+    <div class="header">
+      <h1>🏋️ REGISTRO DE TREINO</h1>
+      <div class="header-right">
+        <span class="date">${fmtDate(today())}</span>
+        <button class="btn-settings" onclick="state.showSettings=!state.showSettings;state.confirmClear=false;render()">⚙</button>
+      </div>
+    </div>`;
+
+  // Settings
+  if (state.showSettings) {
+    html += `<div class="settings">
+      <div class="settings-row">
+        <span class="status">🟢 localStorage ativo</span>
+        <span class="count">• ${entries} registro${entries !== 1 ? "s" : ""} salvos</span>
+      </div>
+      <div class="set-btns">
+        <button class="set-btn" style="background:var(--green)" onclick="doExport()">📤 Exportar</button>
+        <button class="set-btn" style="background:var(--blue)" onclick="state.showImport=!state.showImport;render()">📥 Importar</button>
+        <button class="set-btn danger-btn ${state.confirmClear ? 'confirm' : ''}" onclick="doClear()">
+          ${state.confirmClear ? "⚠ Confirmar exclusão" : "🗑 Limpar dados"}</button>
+      </div>
+      ${state.showImport ? `
+        <textarea id="import-area" class="import-area" placeholder="Cole aqui o código exportado"></textarea>
+        <button class="set-btn" style="background:var(--orange);width:100%;margin-top:4px" onclick="doImport()">Importar dados</button>
+      ` : ""}
+      <div class="hint">Exportar copia um código com todos os seus dados. Para transferir entre dispositivos, exporte em um e importe no outro.</div>
+    </div>`;
+  }
+
+  // Tabs
+  html += `<div class="tabs">`;
+  for (const [k, w] of Object.entries(WORKOUTS)) {
+    const active = state.tab === k;
+    html += `<button class="tab ${active ? "active" : ""}" style="${active ? `background:${w.color};color:#fff` : `color:#666`}" onclick="setTab('${k}')">
+      <span class="letter">${k}</span><span class="day">${w.day}</span>
+    </button>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="wk-title" style="color:${color}">${wk.title}</div>`;
+  html += `<div class="content">`;
+
+  for (const g of wk.groups) {
+    html += `<div class="group-header" style="background:${wk.light};border-left-color:${color}">${g.name}</div>`;
+
+    for (const ex of g.exercises) {
+      const last = getLast(ex.id);
+      const prog = getProg(ex.id);
+      const hist = getHist(ex.id);
+      const isOpen = state.openHist === ex.id;
+      const curVal = state.weights[ex.id] || "";
+
+      html += `<div class="card">
+        <div class="card-top">
+          <div class="ex-info">
+            <div class="ex-name">${ex.name}</div>
+            <div class="ex-meta">
+              <span class="badge" style="background:${wk.light};color:${color}">${ex.series}</span>
+              <span class="pause">Pausa: ${ex.pause}</span>
+            </div>
+          </div>
+          <div class="weight-col">
+            <div class="weight-row">
+              <input type="number" inputmode="decimal" step="0.5" min="0" class="weight-input"
+                placeholder="${last ? last.weight : "—"}" value="${curVal}"
+                oninput="setWeight('${ex.id}',this.value)"
+                style="${curVal ? `border-color:${color}` : ""}">
+              <span class="kg">kg</span>
+            </div>`;
+
+      if (last) {
+        const progClass = prog === "up" ? "prog-up" : prog === "down" ? "prog-down" : "";
+        const arrow = prog === "up" ? "↑" : prog === "down" ? "↓" : prog === "same" ? "=" : "";
+        html += `<button class="last-btn ${progClass}" onclick="toggleHist('${ex.id}')">
+          ${arrow} Último: ${last.weight}kg <span style="font-size:9px;margin-left:2px">${isOpen ? "▲" : "▼"}</span>
+        </button>`;
+      }
+
+      html += `</div></div>`;
+
+      if (isOpen && hist.length > 0) {
+        html += `<div class="history"><div class="hist-label">Histórico</div><div class="hist-grid">`;
+        hist.forEach((h, i) => {
+          let deltaHtml = "";
+          if (i > 0) {
+            const d = h.weight - hist[i-1].weight;
+            const cls = d > 0 ? "prog-up" : d < 0 ? "prog-down" : "";
+            const txt = d > 0 ? `+${d.toFixed(1)}` : d < 0 ? d.toFixed(1) : "=";
+            deltaHtml = `<span class="hist-delta ${cls}">${txt}</span>`;
+          }
+          html += `<div class="hist-chip">
+            <span class="hist-date">${fmtDate(h.date)}</span>
+            <span class="hist-weight">${h.weight}kg</span>
+            ${deltaHtml}
+          </div>`;
+        });
+        html += `</div></div>`;
+      }
+
+      html += `</div>`;
+    }
+  }
+
+  html += `</div>`;
+
+  // Save button
+  html += `<button class="save-btn" style="background:${color}" onclick="doSave()">Salvar Treino</button>`;
+
+  // Toast
+  if (state.toast) {
+    html += `<div class="toast">${state.toast}</div>`;
+  }
+
+  document.getElementById("app").innerHTML = html;
+}
+
+// Init
+state.data = loadData();
+render();
+</script>
+</body>
+</html>
