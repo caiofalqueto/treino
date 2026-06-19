@@ -573,7 +573,7 @@ function renderReport() {
         let deltaH = "";
         if (lastTwo.length === 2) {
           const d = lastTwo[1].weight - lastTwo[0].weight;
-          if (d !== 0) deltaH = `<span style="color:${d>0?"var(--green)":"var(--orange)";font-size:11px;font-weight:600">${d>0?"+":""}${d.toFixed(1)}kg</span>`;
+          if (d !== 0) { const dc = d>0 ? "var(--green)" : "var(--orange)"; const ds = d>0 ? "+" : ""; deltaH = '<span style="color:'+dc+';font-size:11px;font-weight:600">'+ds+d.toFixed(1)+'kg</span>'; }
         }
 
         h += `<div class="prog-card">
