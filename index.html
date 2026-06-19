@@ -172,7 +172,7 @@ function calcPace(dist,mins){
 function renderAeroCard(aeroId,color,isFree,isGymExtra){
   var hist=(S.data[aeroId]||[]).slice(-6);
   var title=isGymExtra?"Deslocamento (ida/volta academia)":isFree?"Atividade Livre":"Registre sua sessao";
-  var types=["Corrida","Caminhada","Misto"];
+  var types=["Corrida","Caminhada","Misto","Tenis","Outro"];var distTypes=["Corrida","Caminhada","Misto"];var showDist=!S.aero.tipo||distTypes.indexOf(S.aero.tipo)>=0;
 
   var h='<div class="aero-section" style="border-left:3px solid '+color+'">';
   h+='<div class="aero-title" style="color:'+color+'">'+(isGymExtra?"\ud83c\udfc3":"")+" "+title+'</div>';
@@ -195,11 +195,13 @@ function renderAeroCard(aeroId,color,isFree,isGymExtra){
   h+='</div>';
 
   h+='<div class="aero-fields">';
+  if(showDist){
   h+='<div class="aero-field"><span>Distancia</span><div style="display:flex;align-items:center;gap:4px">';
   h+='<input type="number" inputmode="decimal" step="0.1" class="aero-input" placeholder="\u2014"';
   h+=' value="'+(S.aero.dist||"")+'" oninput="S.aero.dist=this.value;showPace()"';
   h+=' style="'+(S.aero.dist?"border-color:"+color:"")+'">';
   h+='<span class="aero-unit">km</span></div></div>';
+  }
 
   h+='<div class="aero-field"><span>Tempo</span><div style="display:flex;align-items:center;gap:4px">';
   h+='<input type="number" inputmode="numeric" class="aero-input" placeholder="\u2014"';
@@ -214,10 +216,10 @@ function renderAeroCard(aeroId,color,isFree,isGymExtra){
   h+='<span class="aero-unit">kcal</span></div></div>';
   h+='</div>';
 
-  var pace=calcPace(parseFloat(S.aero.dist),parseFloat(S.aero.mins));
+  if(showDist){var pace=calcPace(parseFloat(S.aero.dist),parseFloat(S.aero.mins));
   h+='<div id="pace-box" class="pace-display" style="'+(pace?"":"display:none")+'">';
   h+='<span class="pace-val" style="color:'+color+'" id="pace-val">'+(pace||"--:--")+'</span>';
-  h+='<span class="pace-label">min/km (pace)</span></div>';
+  h+='<span class="pace-label">min/km (pace)</span></div>';}
 
   if(hist.length>0){
     h+='<div class="aero-hist"><div class="hist-label">Historico</div><div class="aero-hist-grid">';
