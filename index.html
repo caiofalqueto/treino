@@ -465,7 +465,8 @@ function doClear(){if(!S.clr){S.clr=true;render();return}S.data={};S.wts={};S.ae
 
 // ===== CLOUD SYNC (Google Apps Script) =====
 var SYNC_KEY="treino_sync_url";
-function getSyncUrl(){return localStorage.getItem(SYNC_KEY)||""}
+var SYNC_DEFAULT="https://script.google.com/macros/s/AKfycbyf_WkziaTsIh5zgk0-Apc8x86a8lNBDm5H1Hx8Y7BfHfgoM-R2zJ4re-aM_cRgxIfBJQ/exec";
+function getSyncUrl(){return localStorage.getItem(SYNC_KEY)||SYNC_DEFAULT}
 function setSyncUrl(url){localStorage.setItem(SYNC_KEY,url.trim())}
 function doSyncPush(){
   var url=getSyncUrl();
@@ -484,7 +485,6 @@ function doSyncPull(){
   .then(function(r){return r.json()})
   .then(function(d){
     if(d.data){
-      // Merge: cloud data wins for conflicts, keep local-only keys
       var merged=clone(S.data);
       for(var k in d.data){merged[k]=d.data[k]}
       S.data=merged;save(merged);
@@ -493,6 +493,57 @@ function doSyncPull(){
   })
   .catch(function(e){flash("\u2717 Falha: "+e.message)});
 }
+
+// ===== AUTO-SYNC: Domingo 23:30 =====
+var AUTO_SYNC_KEY="last_auto_sync";
+function checkAutoSync(){
+  var now=new Date();
+  if(now.getDay()===0&&now.getHours()===23&&now.getMinutes()>=30&&now.getMinutes()<=35){
+    var lastSync=localStorage.getItem(AUTO_SYNC_KEY)||"";
+    var todayKey=todayStr();
+    if(lastSync!==todayKey){
+      localStorage.setItem(AUTO_SYNC_KEY,todayKey);
+      saveWeeklySnapshot();
+      var url=getSyncUrl();
+      if(url){
+        fetch(url,{method:"POST",mode:"cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(S.data)})
+        .then(function(){flash("\u2713 Auto-sync semanal realizado!")})
+        .catch(function(){});
+      }
+    }
+  }
+}
+function saveWeeklySnapshot(){
+  var dates=getWeekDates(0);
+  var totals=getWeekTotals(dates);
+  var monday=getMonday(todayStr());
+  var snap={
+    week:monday,dates:dates,
+    sessions:totals.sessions,kcal:totals.totalKcal,
+    dist:totals.totalDist,mins:totals.totalMins,
+    exercises:{}
+  };
+  var gymKeys=["TER","QUI","SAB"];
+  for(var gk=0;gk<gymKeys.length;gk++){
+    var wk=GYM[gymKeys[gk]];
+    for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];
+      for(var ei=0;ei<g.exercises.length;ei++){
+        var ex=g.exercises[ei],entries=S.data[ex.id]||[];
+        for(var k=0;k<entries.length;k++){
+          if(dates.indexOf(entries[k].date)>=0){snap.exercises[ex.id]=entries[k].weight;break}
+        }
+      }
+    }
+  }
+  if(!S.data._snapshots)S.data._snapshots=[];
+  var exists=false;
+  for(var i=0;i<S.data._snapshots.length;i++){if(S.data._snapshots[i].week===monday){S.data._snapshots[i]=snap;exists=true;break}}
+  if(!exists)S.data._snapshots.push(snap);
+  if(S.data._snapshots.length>52)S.data._snapshots=S.data._snapshots.slice(-52);
+  save(S.data);
+}
+setInterval(checkAutoSync,60000);
+checkAutoSync();
 
 function render(){
   var tabObj;
@@ -668,11 +719,39 @@ function getExerciseHistory(exId,num){
   return allW.map(function(w){return {week:w,weight:weeks[w]}});
 }
 
+function getHistoricalAverages(excludeWeek){
+  var snaps=S.data._snapshots||[];
+  var filtered=[];
+  for(var i=0;i<snaps.length;i++){if(snaps[i].week!==excludeWeek)filtered.push(snaps[i])}
+  if(filtered.length===0)return null;
+  var avg={sessions:0,kcal:0,dist:0,mins:0,exercises:{},weeks:filtered.length};
+  for(var i=0;i<filtered.length;i++){
+    avg.sessions+=filtered[i].sessions||0;
+    avg.kcal+=filtered[i].kcal||0;
+    avg.dist+=filtered[i].dist||0;
+    avg.mins+=filtered[i].mins||0;
+    var exs=filtered[i].exercises||{};
+    for(var eid in exs){
+      if(!avg.exercises[eid])avg.exercises[eid]={sum:0,count:0};
+      avg.exercises[eid].sum+=exs[eid];avg.exercises[eid].count++;
+    }
+  }
+  var n=filtered.length;
+  avg.sessions=Math.round(avg.sessions/n*10)/10;
+  avg.kcal=Math.round(avg.kcal/n);
+  avg.dist=Math.round(avg.dist/n*10)/10;
+  avg.mins=Math.round(avg.mins/n);
+  for(var eid in avg.exercises){avg.exercises[eid]=Math.round(avg.exercises[eid].sum/avg.exercises[eid].count*10)/10}
+  return avg;
+}
+
 function renderReport(){
   var dates=getWeekDates(R.weekOffset);
   var prevDates=getWeekDates(R.weekOffset-1);
   var totals=getWeekTotals(dates);
   var prev=getWeekTotals(prevDates);
+  var monday=getMonday(dates[0]);
+  var avg=getHistoricalAverages(monday);
   var dayNames=["SEG","TER","QUA","QUI","SEX","SAB","DOM"];
 
   var h='<div class="report-overlay"><div class="report-header"><h2>\ud83d\udcca RELATORIO SEMANAL</h2>';
@@ -683,6 +762,9 @@ function renderReport(){
   h+='<button onclick="R.weekOffset--;renderReport()">\u25c0</button>';
   h+='<div class="week-label">'+fmtD(dates[0])+' \u2014 '+fmtD(dates[6])+'</div>';
   h+='<button onclick="R.weekOffset++;renderReport()"'+(R.weekOffset>=0?" disabled":"")+'>\u25b6</button></div>';
+
+  // Save snapshot button
+  h+='<button style="width:100%;padding:8px;border:1px dashed var(--border);border-radius:8px;background:none;color:var(--text-med);font-size:11px;cursor:pointer;margin-bottom:12px" onclick="saveWeeklySnapshot();flash(\'\\u2713 Snapshot salvo!\')"><i class="ti ti-camera" aria-hidden="true"></i> Salvar snapshot desta semana</button>';
 
   h+='<div class="section-title">Visao da Semana</div><div class="week-grid">';
   for(var i=0;i<7;i++){
@@ -703,8 +785,10 @@ function renderReport(){
 
   function deltaColor(v){return v>0?"var(--green)":v<0?"var(--orange)":"var(--text-light)"}
   function deltaStr(v){return v>0?"+"+v:String(v)}
+  function deltaPct(cur,ref){if(!ref||ref===0)return "";var p=Math.round((cur-ref)/ref*100);return (p>0?"+":"")+p+"%"}
   var kd=totals.totalKcal-prev.totalKcal,md=totals.totalMins-prev.totalMins,sd=totals.sessions-prev.sessions,dd=Math.round((totals.totalDist-prev.totalDist)*10)/10;
 
+  h+='<div class="section-title">Resumo vs Semana Anterior</div>';
   h+='<div class="summary-cards">';
   h+='<div class="sum-card"><div class="val" style="color:var(--green)">'+totals.sessions+'/7</div><div class="lbl">Sessoes</div>';
   if(prev.sessions>0)h+='<div class="delta" style="color:'+deltaColor(sd)+'">'+deltaStr(sd)+' vs anterior</div>';
@@ -718,6 +802,29 @@ function renderReport(){
   h+='<div class="sum-card"><div class="val" style="color:var(--purple)">'+totals.totalMins+'</div><div class="lbl">min (aerobico)</div>';
   if(prev.totalMins>0)h+='<div class="delta" style="color:'+deltaColor(md)+'">'+deltaStr(md)+' min</div>';
   h+='</div></div>';
+
+  // === HISTORICAL AVERAGES COMPARISON ===
+  if(avg&&avg.weeks>=2){
+    h+='<div class="section-title">Vs Media Historica ('+avg.weeks+' semanas)</div>';
+    h+='<div class="summary-cards">';
+    var items=[
+      {cur:totals.sessions,avg:avg.sessions,unit:"",lbl:"Sessoes",color:"var(--green)"},
+      {cur:totals.totalKcal,avg:avg.kcal,unit:" kcal",lbl:"Calorias",color:"var(--orange)"},
+      {cur:totals.totalDist,avg:avg.dist,unit:" km",lbl:"Distancia",color:"var(--blue)"},
+      {cur:totals.totalMins,avg:avg.mins,unit:" min",lbl:"Tempo",color:"var(--purple)"}
+    ];
+    for(var ii=0;ii<items.length;ii++){
+      var it=items[ii],diff=Math.round((it.cur-it.avg)*10)/10;
+      var pct=deltaPct(it.cur,it.avg);
+      h+='<div class="sum-card">';
+      h+='<div class="val" style="color:'+it.color+'">'+it.cur+'</div>';
+      h+='<div class="lbl">'+it.lbl+'</div>';
+      h+='<div style="font-size:10px;color:var(--text-light)">media: '+it.avg+it.unit+'</div>';
+      if(diff!==0)h+='<div class="delta" style="color:'+deltaColor(diff)+'">'+deltaStr(diff)+it.unit+' ('+pct+')</div>';
+      h+='</div>';
+    }
+    h+='</div>';
+  }
 
   // Weight progression
   var hasEx=false;
@@ -740,8 +847,19 @@ function renderReport(){
           var d=hist[hist.length-1].weight-hist[hist.length-2].weight;
           if(d!==0){var dc=d>0?"var(--green)":"var(--orange)";var ds=d>0?"+":"";deltaH='<span style="color:'+dc+';font-size:11px;font-weight:600">'+ds+d.toFixed(1)+'kg</span>'}
         }
-        h+='<div class="prog-card"><div style="display:flex;justify-content:space-between;align-items:center">';
-        h+='<div class="prog-name">'+ex.name+'</div>'+deltaH+'</div>';
+        // Historical average comparison
+        var avgNote="";
+        if(avg&&avg.exercises&&avg.exercises[ex.id]){
+          var avgW=avg.exercises[ex.id];
+          var curW=hist[hist.length-1].weight;
+          var diffW=Math.round((curW-avgW)*10)/10;
+          if(diffW!==0){
+            var avgDc=diffW>0?"var(--green)":"var(--orange)";var avgDs=diffW>0?"+":"";
+            avgNote='<span style="color:'+avgDc+';font-size:10px"> ('+avgDs+diffW+'kg vs media '+avgW+'kg)</span>';
+          }else{avgNote='<span style="font-size:10px;color:var(--text-light)"> (= media '+avgW+'kg)</span>'}
+        }
+        h+='<div class="prog-card"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">';
+        h+='<div class="prog-name">'+ex.name+avgNote+'</div>'+deltaH+'</div>';
         h+='<div class="prog-bars" style="margin-bottom:14px">';
         for(var k=0;k<hist.length;k++){
           var pct=maxW>0?Math.max(8,(hist[k].weight/maxW)*100):8;
