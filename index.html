@@ -175,6 +175,21 @@ var R={open:false,weekOffset:0};
 var dayMap={0:"DOM",1:"SEG",2:"TER",3:"QUA",4:"QUI",5:"SEX",6:"SAB"};
 S.tab=dayMap[new Date().getDay()]||"SEG";
 
+// Migrate old series keys (sets_exId_YYYY-MM-DD → sets_exId)
+(function(){
+  var migrated=false;
+  for(var k in S.data){
+    if(k.match(/^sets_.*_\d{4}-\d{2}-\d{2}$/)){
+      var parts=k.split("_");var date=parts.pop();var newKey=parts.join("_");
+      if(!S.data[newKey])S.data[newKey]=[];
+      var entries=S.data[k];
+      if(Array.isArray(entries)){for(var i=0;i<entries.length;i++){S.data[newKey].push(entries[i])}}
+      delete S.data[k];migrated=true;
+    }
+  }
+  if(migrated)save(S.data);
+})();
+
 
 // ===== TIMER (timestamp-based for background support) =====
 var TIMER={active:null,endTime:0,remaining:0,interval:null,flashInterval:null,fired:false};
@@ -258,26 +273,31 @@ function parsePauseSeconds(pauseStr){
 }
 
 // ===== SERIES COUNTER =====
-function getSeriesKey(exId){return "sets_"+exId+"_"+todayStr()}
-function getCompletedSets(exId){var k=getSeriesKey(exId);var v=S.data[k];if(!v||!Array.isArray(v))return 0;var entry=null;for(var i=0;i<v.length;i++){if(v[i].date===todayStr())entry=v[i]}return entry?entry.count:0}
+function getSeriesKey(exId){return "sets_"+exId}
+function getCompletedSets(exId){
+  var k=getSeriesKey(exId);var v=S.data[k];
+  if(!v||!Array.isArray(v))return 0;
+  for(var i=v.length-1;i>=0;i--){if(v[i].date===todayStr())return v[i].count||0}
+  return 0;
+}
 function toggleSet(exId,setNum,totalSets,pauseSec){
   var k=getSeriesKey(exId);
   if(!S.data[k])S.data[k]=[];
-  var entry=null;var idx=-1;
-  for(var i=0;i<S.data[k].length;i++){if(S.data[k][i].date===todayStr()){entry=S.data[k][i];idx=i}}
-  var current=entry?entry.count:0;
+  var idx=-1;
+  for(var i=0;i<S.data[k].length;i++){if(S.data[k][i].date===todayStr()){idx=i;break}}
+  var current=idx>=0?(S.data[k][idx].count||0):0;
   if(setNum<=current){
-    // uncheck
-    if(entry){entry.count=setNum-1;S.data[k][idx]=entry}
+    if(idx>=0)S.data[k][idx].count=setNum-1;
   }else{
-    // check
-    if(!entry){S.data[k].push({date:todayStr(),count:setNum})}
-    else{entry.count=setNum;S.data[k][idx]=entry}
-    // auto-start timer if not last set
+    if(idx<0){S.data[k].push({date:todayStr(),count:setNum});idx=S.data[k].length-1}
+    else{S.data[k][idx].count=setNum}
     if(setNum<totalSets&&pauseSec>0){startTimer(exId,pauseSec)}
   }
   save(S.data);render();
 }
+// Save on page exit (mobile + desktop)
+window.addEventListener("beforeunload",function(){save(S.data)});
+window.addEventListener("pagehide",function(){save(S.data)});
 function parseSeriesCount(seriesStr){
   if(!seriesStr)return 3;
   var m=seriesStr.match(/(\d+)/);
@@ -443,6 +463,37 @@ function doImport(){
 }
 function doClear(){if(!S.clr){S.clr=true;render();return}S.data={};S.wts={};S.aero={};save({});S.clr=false;S.sets=false;flash("Dados apagados")}
 
+// ===== CLOUD SYNC (Google Apps Script) =====
+var SYNC_KEY="treino_sync_url";
+function getSyncUrl(){return localStorage.getItem(SYNC_KEY)||""}
+function setSyncUrl(url){localStorage.setItem(SYNC_KEY,url.trim())}
+function doSyncPush(){
+  var url=getSyncUrl();
+  if(!url){flash("Configure a URL de sync primeiro");return}
+  flash("\u2B06 Enviando...");
+  fetch(url,{method:"POST",mode:"cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(S.data)})
+  .then(function(r){return r.json()})
+  .then(function(d){flash(d.ok?"\u2713 Dados enviados!":"\u2717 Erro: "+(d.error||""))})
+  .catch(function(e){flash("\u2717 Falha: "+e.message)});
+}
+function doSyncPull(){
+  var url=getSyncUrl();
+  if(!url){flash("Configure a URL de sync primeiro");return}
+  flash("\u2B07 Recebendo...");
+  fetch(url,{mode:"cors"})
+  .then(function(r){return r.json()})
+  .then(function(d){
+    if(d.data){
+      // Merge: cloud data wins for conflicts, keep local-only keys
+      var merged=clone(S.data);
+      for(var k in d.data){merged[k]=d.data[k]}
+      S.data=merged;save(merged);
+      flash("\u2713 Dados recebidos e mesclados!");render();
+    }else{flash("\u2717 Erro: "+(d.error||"sem dados"))}
+  })
+  .catch(function(e){flash("\u2717 Falha: "+e.message)});
+}
+
 function render(){
   var tabObj;
   for(var i=0;i<TABS.length;i++){if(TABS[i].key===S.tab){tabObj=TABS[i];break}}
@@ -466,7 +517,19 @@ function render(){
       h+='<textarea id="imp-area" class="import-area" placeholder="Cole o codigo exportado"></textarea>';
       h+='<button class="set-btn" style="background:var(--orange);width:100%;margin-top:4px" onclick="doImport()">Importar</button>';
     }
-    h+='<div class="hint">Exporte para backup. Importe para restaurar em outro dispositivo.</div></div>';
+    h+='<div class="hint">Exporte para backup. Importe para restaurar em outro dispositivo.</div>';
+    // Cloud sync section
+    h+='<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">';
+    h+='<div style="font-size:12px;font-weight:700;color:var(--text-med);margin-bottom:6px">\u2601 Sincronizar entre dispositivos</div>';
+    var syncUrl=getSyncUrl();
+    h+='<input id="sync-url" type="text" value="'+syncUrl+'" placeholder="Cole a URL do Google Apps Script" style="width:100%;box-sizing:border-box;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:11px;margin-bottom:6px;font-family:monospace" onchange="setSyncUrl(this.value)">';
+    h+='<div class="set-btns">';
+    h+='<button class="set-btn" style="background:#1976D2" onclick="doSyncPush()">\u2B06 Enviar</button>';
+    h+='<button class="set-btn" style="background:#388E3C" onclick="doSyncPull()">\u2B07 Receber</button>';
+    h+='</div>';
+    h+='<div class="hint">Crie um Google Apps Script e cole a URL acima. Envie do celular, Receba no PC (ou vice-versa).</div>';
+    h+='</div>';
+    h+='</div>';
   }
 
   h+='<div class="tabs">';
