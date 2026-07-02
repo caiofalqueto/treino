@@ -140,13 +140,23 @@ body{font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;background
 .flash-overlay{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0}
 .flash-overlay.active{animation:screenFlash .2s ease-in-out 10}
 @keyframes screenFlash{0%,100%{opacity:0}40%{opacity:1;background:#d32f2f}60%{opacity:1;background:#fff}}
+.floating-timer{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);z-index:998;background:var(--card);border:2px solid #d32f2f;border-radius:14px;padding:6px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.25);min-width:200px;justify-content:center}
+.floating-timer .ft-name{font-size:11px;color:var(--text-med);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.floating-timer .ft-time{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;color:#d32f2f}
+.floating-timer .ft-time.flash{animation:timerFlash .2s ease infinite}
+.floating-timer .ft-stop{background:#d32f2f;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer}
+.obs-field{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:11px;font-family:inherit;color:var(--text);background:var(--bg);margin-top:6px;resize:none;min-height:28px}
+.obs-field::placeholder{color:var(--text-light)}
+.weight-delta{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;margin-left:6px}
+.weight-prev{font-size:10px;color:var(--text-light);margin-left:4px}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="flash-overlay" class="flash-overlay"></div>
+<div id="floating-timer" style="display:none"></div>
 <script>
-var GYM={"TER":{title:"Peito + Tríceps",day:"Terça",color:"#2D6A4F",light:"#E8F5E9",type:"gym",groups:[{name:"Peito",exercises:[{id:"chest_press",name:"Supino na máquina (Chest Press)",subs:"Supino reto c/ halteres · Supino reto c/ barra",series:"3×12",pause:"60s",tips:["Costas e quadril colados no encosto — pés firmes no chão", "Empurre à frente sem travar cotovelos; retorne em 3s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg"},{id:"peck_deck",name:"Voador (Peck Deck)",subs:"Crucifixo c/ halteres · Crossover na polia",series:"3×12",pause:"45s",tips:["Cotovelos levemente flexionados durante todo o arco", "Feche até as pegadas se encontrarem; abra até leve alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butterfly/0.jpg"},{id:"incline_press",name:"Supino inclinado com halteres",subs:"Supino inclinado no Smith · Crossover polia baixa para alta",series:"3×12",pause:"60s",tips:["Banco a 30 graus, costas apoiadas — não arquear a lombar", "Suba os halteres convergindo sem bater; desça até cotovelos na linha do peito"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg"}]},{name:"Tríceps",exercises:[{id:"tri_machine",name:"Tríceps na máquina (extensão sentado)",subs:"Tríceps pulley c/ barra reta · Tríceps mergulho no graviton",series:"3×12",pause:"45s",tips:["Cotovelos fixos, alinhados com os ombros — não abra", "Estenda completamente; retorne devagar sem bater o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_One_Arm_Tricep_Extension/0.jpg"},{id:"tri_pulley",name:"Tríceps pulley com corda",subs:"Tríceps pulley c/ barra reta · Tríceps na máquina",series:"3×12",pause:"45s",tips:["Cotovelos grudados ao corpo — não incline o tronco", "Empurre para baixo e abra as pontas da corda no final"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown_-_Rope_Attachment/0.jpg"},{id:"tri_testa",name:"Tríceps testa com halteres (banco reto)",subs:"Tríceps francês unilateral · Mergulho no banco",series:"3×12",pause:"45s",tips:["Deitado no banco, cotovelos apontando para o teto, fixos", "Flexione apenas os cotovelos descendo até a testa; estenda de volta"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg"}]}]},"QUI":{title:"Costas + Bíceps",day:"Quinta",color:"#264653",light:"#E3EFF3",type:"gym",groups:[{name:"Costas",exercises:[{id:"lat_pull",name:"Puxada frontal (Lat Pulldown)",subs:"Puxada no graviton · Puxada c/ triângulo",series:"3×12",pause:"60s",tips:["Pegada pronada, pouco mais larga que os ombros", "Projete o peito para cima ao puxar; estenda totalmente ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg"},{id:"seated_row",name:"Remada sentada na polia (cabo)",subs:"Remada articulada (máquina) · Remada cavalinho",series:"3×12",pause:"60s",tips:["Tronco ereto o tempo todo — NÃO balance para trás", "Puxe apertando as escápulas; retorne sentindo o alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg"},{id:"hammer_row",name:"Remada articulada (Hammer / T-Bar)",subs:"Remada unilateral c/ halter apoiado · Remada sentada",series:"3×12",pause:"60s",tips:["Peito apoiado no encosto — protege totalmente a lombar", "Puxe com os cotovelos, não com as mãos; aperte escápulas no topo"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/One-Arm_Dumbbell_Row/0.jpg"},{id:"face_pull",name:"Face Pull na polia (corda)",subs:"Face Pull c/ elástico · Crucifixo inverso",series:"3×15",pause:"45s",tips:["Polia na altura da cabeça, puxe a corda em direção ao rosto","Abra os cotovelos para fora, aperte escápulas no final"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Face_Pull/0.jpg"}]},{name:"Bíceps",exercises:[{id:"preacher",name:"Rosca Scott na máquina (Preacher)",subs:"Rosca Scott c/ barra W · Rosca direta c/ halteres",series:"3×12",pause:"45s",tips:["Braços apoiados no pad, axilas na borda superior", "Desça controlando sem estender 100% (protege cotovelo)"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg"},{id:"bicep_curl",name:"Rosca alternada com halteres",subs:"Rosca na polia baixa · Rosca na máquina",series:"3×12",pause:"45s",tips:["Sentado com encosto para proteger a lombar", "Cotovelo fixo ao lado do corpo — se balançar, reduza o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bicep_Curl/0.jpg"},{id:"hammer_curl",name:"Rosca martelo com halteres",subs:"Rosca martelo na polia (corda) · Rosca punho neutro",series:"3×12",pause:"45s",tips:["Pegada neutra (palmas voltadas uma para a outra)", "Trabalha braquiorradial + bíceps externo; pode fazer sentado"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg"}]}]},"SAB":{title:"Pernas + Ombros + Abdômen",day:"Sábado",color:"#C65D3E",light:"#FFF0EB",type:"gym",groups:[{name:"Pernas (adaptado p/ lombar)",exercises:[{id:"leg_ext",name:"Cadeira extensora",subs:"Extensão na polia (caneleira) · Afundo c/ halteres leves",series:"3×15",pause:"60s",tips:["Joelho alinhado com eixo da máquina; estenda totalmente e segure 1s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg"},{id:"leg_curl",name:"Mesa flexora (deitado)",subs:"Cadeira flexora (sentado) · Flexão na polia (caneleira)",series:"3×12",pause:"60s",tips:["Quadril colado no banco; traga calcanhares em direção ao glúteo"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg"},{id:"hip_abd",name:"Abdução de quadril (máquina)",subs:"Abdução c/ mini band · Abdução na polia baixa",series:"3×15",pause:"45s",tips:["Abra controlando, segure 1s; a fase de retorno é a mais eficaz"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/0.jpg"},{id:"hip_add",name:"Adução de quadril (máquina)",subs:"Adução na polia baixa · Adução c/ bola entre joelhos",series:"3×15",pause:"45s",tips:["Feche controlando, aperte 1s; abra devagar até leve alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/0.jpg"},{id:"calf",name:"Panturrilha sentada (máquina)",subs:"Panturrilha em pé (máquina) · Panturrilha no Smith",series:"3×15",pause:"45s",tips:["Suba na ponta dos pés e segure 1s; desça abaixo da plataforma"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg"}]},{name:"Ombros",exercises:[{id:"shoulder_press",name:"Desenvolvimento na máquina",subs:"Desenvolvimento c/ halteres sentado · Desenvolvimento no Smith",series:"3×12",pause:"60s",tips:["Banco a 80 graus, costas apoiadas; empurre para cima sem travar cotovelos"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/0.jpg"},{id:"lat_raise",name:"Elevação lateral (halteres ou cabo)",subs:"Elevação lateral na máquina · Elevação lateral na polia",series:"3×15",pause:"45s",tips:["Eleve até a altura dos ombros, não acima; cargas leves com controle"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg"}]},{name:"Abdômen",exercises:[{id:"crunch_m",name:"Abdominal na máquina (Crunch)",subs:"Prancha frontal (30-45s) · Abdominal no cabo (polia alta)",series:"3×15",pause:"30s",tips:["Contraia o abdômen para flexionar, não puxe com os braços"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Crunches/0.jpg"},{id:"side_plank",name:"Prancha lateral (isometria)",subs:"Rotação russa c/ peso · Flexão lateral no cabo",series:"3x20s/lado",pause:"30s",tips:["Corpo em linha reta; contraia abdômen + glúteo simultaneamente"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Bridge/0.jpg"}]}]}};
+var GYM={"TER":{title:"Peito + Tríceps",day:"Terça",color:"#2D6A4F",light:"#E8F5E9",type:"gym",groups:[{name:"Peito",exercises:[{id:"chest_press",name:"Supino na máquina (Chest Press)",subs:"Supino reto c/ halteres · Supino reto c/ barra",series:"3×12",pause:"60s",tips:["Costas e quadril colados no encosto — pés firmes no chão", "Empurre à frente sem travar cotovelos; retorne em 3s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg"},{id:"peck_deck",name:"Voador (Peck Deck)",subs:"Crucifixo c/ halteres · Crossover na polia",series:"3×12",pause:"45s",tips:["Cotovelos levemente flexionados durante todo o arco", "Feche até as pegadas se encontrarem; abra até leve alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butterfly/0.jpg"},{id:"incline_press",name:"Supino inclinado na maquina",subs:"Supino inclinado c/ halteres · Supino inclinado no Smith",series:"3×12",pause:"60s",tips:["Ajuste o banco da maquina a ~30°, costas e quadril bem apoiados","Empurre para cima e a frente sem travar cotovelos; desça controlado ate sentir leve alongamento no peitoral superior","Foco: peitoral superior (clavicular) — segure 1s no topo contraindo"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg"}]},{name:"Tríceps",exercises:[{id:"tri_machine",name:"Tríceps na máquina (extensão sentado)",subs:"Tríceps pulley c/ barra reta · Tríceps mergulho no graviton",series:"3×12",pause:"45s",tips:["Cotovelos fixos, alinhados com os ombros — não abra", "Estenda completamente; retorne devagar sem bater o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_One_Arm_Tricep_Extension/0.jpg"},{id:"tri_pulley",name:"Tríceps pulley com corda",subs:"Tríceps pulley c/ barra reta · Tríceps na máquina",series:"3×12",pause:"45s",tips:["Cotovelos grudados ao corpo — não incline o tronco", "Empurre para baixo e abra as pontas da corda no final"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown_-_Rope_Attachment/0.jpg"},{id:"tri_testa",name:"Tríceps testa com halteres (banco reto)",subs:"Tríceps francês unilateral · Mergulho no banco",series:"3×12",pause:"45s",tips:["Deitado no banco, cotovelos apontando para o teto, fixos", "Flexione apenas os cotovelos descendo até a testa; estenda de volta"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg"}]}]},"QUI":{title:"Costas + Bíceps",day:"Quinta",color:"#264653",light:"#E3EFF3",type:"gym",groups:[{name:"Costas",exercises:[{id:"lat_pull",name:"Puxada frontal (Lat Pulldown)",subs:"Puxada no graviton · Puxada c/ triângulo",series:"3×12",pause:"60s",tips:["Pegada pronada, pouco mais larga que os ombros", "Projete o peito para cima ao puxar; estenda totalmente ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg"},{id:"seated_row",name:"Remada sentada na polia (cabo)",subs:"Remada articulada (máquina) · Remada cavalinho",series:"3×12",pause:"60s",tips:["Tronco ereto o tempo todo — NÃO balance para trás", "Puxe apertando as escápulas; retorne sentindo o alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg"},{id:"hammer_row",name:"Remada sentada na maquina",subs:"Remada cavalinho · Remada articulada (Hammer)",series:"3×12",pause:"60s",tips:["Peito apoiado no pad frontal — protege totalmente a lombar","Puxe os pegadores trazendo os cotovelos para tras ate apertar as escapulas; retorne controlado","Foco: dorsal medio, romboides, trapezio medio — mantenha ombros baixos, nao encolha"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg"},{id:"face_pull",name:"Face Pull na polia (corda)",subs:"Face Pull c/ elástico · Crucifixo inverso",series:"3×15",pause:"45s",tips:["Polia na altura da cabeca, segure a corda com pegada neutra (polegares pra voce)","Puxe a corda em direcao ao rosto, ABRINDO os cotovelos para fora e para cima","Foco: deltoide posterior + trapezio medio + rotadores externos — excelente para postura"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Face_Pull/0.jpg"}]},{name:"Bíceps",exercises:[{id:"preacher",name:"Rosca Scott na máquina (Preacher)",subs:"Rosca Scott c/ barra W · Rosca direta c/ halteres",series:"3×12",pause:"45s",tips:["Braços apoiados no pad, axilas na borda superior", "Desça controlando sem estender 100% (protege cotovelo)"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg"},{id:"bicep_curl",name:"Rosca alternada com halteres",subs:"Rosca na polia baixa · Rosca na máquina",series:"3×12",pause:"45s",tips:["Sentado com encosto para proteger a lombar", "Cotovelo fixo ao lado do corpo — se balançar, reduza o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bicep_Curl/0.jpg"},{id:"hammer_curl",name:"Rosca martelo com halteres",subs:"Rosca martelo na polia (corda) · Rosca punho neutro",series:"3×12",pause:"45s",tips:["Pegada neutra (palmas voltadas uma para a outra)", "Trabalha braquiorradial + bíceps externo; pode fazer sentado"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg"}]}]},"SAB":{title:"Pernas + Ombros + Abdômen",day:"Sábado",color:"#C65D3E",light:"#FFF0EB",type:"gym",groups:[{name:"Pernas (adaptado p/ lombar)",exercises:[{id:"leg_ext",name:"Cadeira extensora",subs:"Extensão na polia (caneleira) · Afundo c/ halteres leves",series:"3×15",pause:"60s",tips:["Ajuste o encosto para que o joelho fique alinhado com o eixo de rotacao da maquina","Estenda as pernas totalmente e SEGURE 1s no topo contraindo o quadriceps","Foco: quadriceps (reto femoral + vasto) — desca controlado, nao deixe o peso bater"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg"},{id:"leg_curl",name:"Mesa flexora (deitado)",subs:"Cadeira flexora (sentado) · Flexão na polia (caneleira)",series:"3×12",pause:"60s",tips:["Deitado de barriga para baixo, quadril colado no banco (nao levante)","Flexione trazendo os calcanhares em direcao ao gluteo; segure 1s no topo","Foco: isquiotibiais + panturrilha — desca em 2-3s controlando a fase negativa"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg"},{id:"hip_abd",name:"Abdução de quadril (máquina)",subs:"Abdução c/ mini band · Abdução na polia baixa",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, joelhos alinhados com o eixo da maquina","Abra as pernas controlando, segure 1s na abertura maxima","Foco: gluteo medio + minimo — a fase de FECHAR (retorno) tambem trabalha, va devagar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/0.jpg"},{id:"hip_add",name:"Adução de quadril (máquina)",subs:"Adução na polia baixa · Adução c/ bola entre joelhos",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, pernas abertas na posicao inicial da maquina","Feche as pernas controlando, aperte 1s na contracao maxima","Foco: adutor longo + magno — abra devagar ate sentir leve alongamento na regiao interna"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/0.jpg"},{id:"calf",name:"Panturrilha sentada (máquina)",subs:"Panturrilha em pé (máquina) · Panturrilha no Smith",series:"3×15",pause:"45s",tips:["Joelhos a 90°, pontas dos pes na plataforma com calcanhares livres","Suba na PONTA dos pes o maximo possivel e segure 2s no topo","Foco: soleo (panturrilha profunda) — desca ABAIXO da plataforma para alongar completamente"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg"}]},{name:"Ombros",exercises:[{id:"shoulder_press",name:"Desenvolvimento na máquina",subs:"Desenvolvimento c/ halteres sentado · Desenvolvimento no Smith",series:"3×12",pause:"60s",tips:["Ajuste o assento para que os pegadores fiquem na altura dos ombros","Costas apoiadas no encosto a ~80°; empurre para cima sem travar cotovelos","Foco: deltoide anterior + medio + triceps — desca ate cotovelos na linha dos ombros"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/0.jpg"},{id:"lat_raise",name:"Elevação lateral (halteres ou cabo)",subs:"Elevação lateral na máquina · Elevação lateral na polia",series:"3×15",pause:"45s",tips:["Em pe ou sentado, halteres ao lado do corpo com leve flexao nos cotovelos","Eleve lateralmente ate a ALTURA dos ombros (nao acima!) com controle total","Foco: deltoide medio (largura dos ombros) — cargas LEVES com execucao perfeita"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg"}]},{name:"Abdômen",exercises:[{id:"crunch_m",name:"Abdominal na máquina (Crunch)",subs:"Prancha frontal (30-45s) · Abdominal no cabo (polia alta)",series:"3×15",pause:"30s",tips:["Ajuste o assento e o peso; segure os pegadores sem puxar com os bracos","Contraia o ABDOMEN para flexionar o tronco — o movimento vem do core, nao dos bracos","Foco: reto abdominal (parte superior) — expire ao contrair, inspire ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Crunches/0.jpg"},{id:"side_plank",name:"Prancha lateral (isometria)",subs:"Rotação russa c/ peso · Flexão lateral no cabo",series:"3x20s/lado",pause:"30s",tips:["Apoie o antebraco no chao com cotovelo abaixo do ombro; pes empilhados ou defasados","Eleve o quadril formando linha reta dos pes a cabeca — contraia abdomen + gluteo","Foco: obliquos + transverso + quadrado lombar — se 20s for facil, aumente para 30s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Bridge/0.jpg"}]}]}};
 
 
 var TABS=[
@@ -168,7 +178,7 @@ function load(){try{var s=localStorage.getItem(SK);if(s){var d=JSON.parse(s);try
 function save(d){try{var s=JSON.stringify(d);localStorage.setItem(SK,s);try{localStorage.setItem(SK_BK,s)}catch(e){}return true}catch(e){return false}}
 function countE(d){var n=0;for(var k in d){if(Array.isArray(d[k]))n+=d[k].length}return n}
 
-var S={tab:"SEG",data:load(),wts:{},aero:{},hist:null,sets:false,imp:false,toast:null,clr:false};
+var S={tab:"SEG",data:load(),wts:{},aero:{},obs:{},hist:null,sets:false,imp:false,toast:null,clr:false};
 var R={open:false,weekOffset:0};
 
 // Auto-select today
@@ -192,16 +202,41 @@ S.tab=dayMap[new Date().getDay()]||"SEG";
 
 
 // ===== TIMER (timestamp-based for background support) =====
-var TIMER={active:null,endTime:0,remaining:0,interval:null,flashInterval:null,fired:false};
-var audioCtx=null;
+var TIMER={active:null,activeName:"",endTime:0,remaining:0,interval:null,flashInterval:null,fired:false};
+var audioCtx=null;var wakeLock=null;
 function getAudioCtx(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}return audioCtx}
+
+// Request notification permission on first interaction
+document.addEventListener("click",function reqNotif(){
+  if("Notification" in window&&Notification.permission==="default")Notification.requestPermission();
+  document.removeEventListener("click",reqNotif);
+},{once:true});
+
+// Wake Lock to keep screen on during timer
+async function requestWakeLock(){try{if("wakeLock" in navigator){wakeLock=await navigator.wakeLock.request("screen")}}catch(e){}}
+function releaseWakeLock(){if(wakeLock){wakeLock.release().catch(function(){});wakeLock=null}}
+
 function beep(){
   if(navigator.vibrate)navigator.vibrate([200,100,200,100,200,100,400]);
   var ov=document.getElementById("flash-overlay");
   if(ov){ov.classList.add("active");setTimeout(function(){ov.classList.remove("active")},2500)}
+  // Try notification for background alert
+  if("Notification" in window&&Notification.permission==="granted"){
+    try{new Notification("Tempo esgotado!",{body:TIMER.activeName+" — hora da proxima serie",icon:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏱</text></svg>",tag:"treino-timer",requireInteraction:true})}catch(e){}
+  }
   var ctx=getAudioCtx();if(!ctx)return;
-  function playTone(freq,delay,dur){setTimeout(function(){var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="square";o.frequency.value=freq;g.gain.value=0.35;o.start();setTimeout(function(){o.stop()},dur)},delay)}
+  function playTone(freq,delay,dur){setTimeout(function(){try{var o=ctx.createOscillator();var g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type="square";o.frequency.value=freq;g.gain.value=0.35;o.start();setTimeout(function(){o.stop()},dur)}catch(e){}},delay)}
   playTone(880,0,200);playTone(1100,300,200);playTone(880,600,200);playTone(1100,900,300);
+}
+function updateFloatingTimer(){
+  var ft=document.getElementById("floating-timer");
+  if(!ft)return;
+  if(!TIMER.active){ft.style.display="none";return}
+  ft.style.display="flex";
+  var m=Math.floor(TIMER.remaining/60);var s=TIMER.remaining%60;
+  var timeStr=m+":"+(s<10?"0":"")+s;
+  var isFlash=TIMER.remaining<=0&&TIMER.flashInterval;
+  ft.innerHTML='<div class="floating-timer"><span class="ft-name">'+TIMER.activeName+'</span><span class="ft-time'+(isFlash?" flash":"")+'">'+timeStr+'</span><button class="ft-stop" onclick="stopTimer();render()">Parar</button></div>';
 }
 function timerTick(){
   var now=Date.now();
@@ -209,32 +244,43 @@ function timerTick(){
   if(TIMER.remaining<=0&&!TIMER.fired){
     TIMER.fired=true;
     clearInterval(TIMER.interval);TIMER.interval=null;
+    releaseWakeLock();
     beep();
-    TIMER.flashInterval=setInterval(function(){updateTimerUI()},100);
+    TIMER.flashInterval=setInterval(function(){updateTimerUI();updateFloatingTimer()},100);
     setTimeout(function(){stopTimer();render()},3000);
   }
-  updateTimerUI();
+  updateTimerUI();updateFloatingTimer();
 }
-function startTimer(exId,seconds){
+function startTimer(exId,seconds,exName){
   stopTimer();
-  TIMER.active=exId;TIMER.fired=false;
+  TIMER.active=exId;TIMER.activeName=exName||exId;TIMER.fired=false;
   TIMER.endTime=Date.now()+seconds*1000;
   TIMER.remaining=seconds;
-  updateTimerUI();
+  requestWakeLock();
+  // Resume audio context (needed for mobile after user gesture)
+  var ctx=getAudioCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
+  updateTimerUI();updateFloatingTimer();
   TIMER.interval=setInterval(timerTick,250);
 }
 function stopTimer(){
   if(TIMER.interval){clearInterval(TIMER.interval);TIMER.interval=null}
   if(TIMER.flashInterval){clearInterval(TIMER.flashInterval);TIMER.flashInterval=null}
-  TIMER.active=null;TIMER.remaining=0;TIMER.fired=false;
+  TIMER.active=null;TIMER.activeName="";TIMER.remaining=0;TIMER.fired=false;
+  releaseWakeLock();
+  updateFloatingTimer();
 }
 // Re-check timer when app comes back to foreground
 document.addEventListener("visibilitychange",function(){
-  if(!document.hidden&&TIMER.active&&TIMER.interval){timerTick()}
-  if(!document.hidden&&TIMER.active&&!TIMER.interval&&!TIMER.fired){
-    var now=Date.now();TIMER.remaining=Math.max(0,Math.ceil((TIMER.endTime-now)/1000));
-    if(TIMER.remaining<=0){TIMER.fired=true;beep();TIMER.flashInterval=setInterval(function(){updateTimerUI()},100);setTimeout(function(){stopTimer();render()},3000)}
-    else{TIMER.interval=setInterval(timerTick,250)}
+  if(!document.hidden&&TIMER.active){
+    // Resume audio context
+    var ctx=getAudioCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
+    if(TIMER.interval){timerTick()}
+    else if(!TIMER.fired){
+      var now=Date.now();TIMER.remaining=Math.max(0,Math.ceil((TIMER.endTime-now)/1000));
+      if(TIMER.remaining<=0){TIMER.fired=true;beep();TIMER.flashInterval=setInterval(function(){updateTimerUI();updateFloatingTimer()},100);setTimeout(function(){stopTimer();render()},3000)}
+      else{TIMER.interval=setInterval(timerTick,250);requestWakeLock()}
+    }
+    updateFloatingTimer();
   }
 });
 function updateTimerUI(){
@@ -249,21 +295,21 @@ function updateTimerUI(){
     else if(TIMER.remaining<=0&&TIMER.flashInterval){btn.textContent="\u2705"}
   }
 }
-function toggleTimer(exId,seconds,totalSets){
+function toggleTimer(exId,seconds,totalSets,exName){
   if(TIMER.active===exId){stopTimer();render();return}
   // Auto-increment series count
   var doneSets=getCompletedSets(exId);
   if(doneSets<totalSets){
     var k=getSeriesKey(exId);
     if(!S.data[k])S.data[k]=[];
-    var entry=null;var idx=-1;
-    for(var i=0;i<S.data[k].length;i++){if(S.data[k][i].date===todayStr()){entry=S.data[k][i];idx=i}}
+    var idx=-1;
+    for(var i=0;i<S.data[k].length;i++){if(S.data[k][i].date===todayStr()){idx=i;break}}
     var newCount=doneSets+1;
-    if(!entry){S.data[k].push({date:todayStr(),count:newCount})}
-    else{entry.count=newCount;S.data[k][idx]=entry}
+    if(idx<0){S.data[k].push({date:todayStr(),count:newCount})}
+    else{S.data[k][idx].count=newCount}
     save(S.data);
   }
-  startTimer(exId,seconds);
+  startTimer(exId,seconds,exName);
   render();
 }
 function parsePauseSeconds(pauseStr){
@@ -409,6 +455,15 @@ function doSaveGym(){
         for(var k=0;k<nd[ex.id].length;k++){if(nd[ex.id][k].date===t){idx=k;break}}
         if(idx>=0)nd[ex.id][idx]={date:t,weight:w};else nd[ex.id].push({date:t,weight:w});
       }
+      // Save observation if filled
+      var obsText=S.obs&&S.obs[ex.id]||"";
+      if(obsText.trim()){
+        var obsKey="obs_"+ex.id;
+        if(!nd[obsKey])nd[obsKey]=[];
+        var oidx=-1;for(var k=0;k<nd[obsKey].length;k++){if(nd[obsKey][k].date===t){oidx=k;break}}
+        if(oidx>=0)nd[obsKey][oidx]={date:t,text:obsText.trim()};else nd[obsKey].push({date:t,text:obsText.trim()});
+        if(nd[obsKey].length>30)nd[obsKey]=nd[obsKey].slice(-30);
+      }
     }
   }
   // Also save aero if filled
@@ -426,7 +481,7 @@ function doSaveGym(){
     if(aidx>=0)nd[aid][aidx]=entry;else nd[aid].push(entry);
   }
   if(!any){flash("Preencha pelo menos um campo");return}
-  S.data=nd;var ok=save(nd);S.wts={};S.aero={};
+  S.data=nd;var ok=save(nd);S.wts={};S.aero={};S.obs={};
   flash(ok?"\u2713 Treino salvo!":"Erro ao salvar");
 }
 
@@ -620,10 +675,28 @@ function render(){
         if(last){
           var pc=prog==="up"?"prog-up":prog==="down"?"prog-down":"";
           var ar=prog==="up"?"\u2191":prog==="down"?"\u2193":prog==="same"?"=":"";
+          // Show weight delta with color
+          var deltaInfo="";
+          if(hist.length>=2){
+            var prevW=hist[hist.length-2].weight;
+            var curW=last.weight;
+            var wd=curW-prevW;
+            if(wd!==0){
+              var wdc=wd>0?"var(--green)":"var(--orange)";
+              var wds=wd>0?"+":"";
+              deltaInfo='<span class="weight-delta" style="color:'+wdc+'">'+wds+wd.toFixed(1)+'kg</span>';
+              deltaInfo+='<span class="weight-prev">(antes: '+prevW+'kg)</span>';
+            }
+          }
           h+='<button class="last-btn '+pc+'" onclick="S.hist=S.hist===\''+ex.id+'\'?null:\''+ex.id+'\';render()">';
-          h+=ar+' Ultimo: '+last.weight+'kg <span style="font-size:9px;margin-left:2px">'+(isO?"\u25b2":"\u25bc")+'</span></button>';
+          h+=ar+' '+last.weight+'kg '+deltaInfo+' <span style="font-size:9px;margin-left:2px">'+(isO?"\u25b2":"\u25bc")+'</span></button>';
         }
         h+='</div>';
+        // Observation field
+        var obsVal=S.obs&&S.obs[ex.id]||"";
+        var lastObs="";var obsEntries=S.data["obs_"+ex.id]||[];
+        if(obsEntries.length>0)lastObs=obsEntries[obsEntries.length-1].text||"";
+        h+='<textarea class="obs-field" placeholder="'+(lastObs?lastObs:"Observacao...").replace(/"/g,"&quot;")+'" rows="1" oninput="if(!S.obs)S.obs={};S.obs[\''+ex.id+'\']=this.value">'+obsVal+'</textarea>';
         // Series counter
         var totalSets=parseSeriesCount(ex.series);
         var doneSets=getCompletedSets(ex.id);
@@ -645,10 +718,10 @@ function render(){
         }else if(timerActive){
           h+='<div style="display:flex;align-items:center;gap:6px">';
           h+='<span id="timer-'+ex.id+'" class="timer-display'+(TIMER.remaining<=0&&TIMER.flashInterval?' flash':'')+'" style="color:'+c+'">'+Math.floor(TIMER.remaining/60)+':'+(TIMER.remaining%60<10?'0':'')+(TIMER.remaining%60)+'</span>';
-          h+='<button id="tbtn-'+ex.id+'" class="timer-btn" style="background:'+c+';color:#fff" onclick="toggleTimer(\''+ex.id+'\','+pauseSec+','+totalSets+')">\u23F9</button>';
+          h+='<button id="tbtn-'+ex.id+'" class="timer-btn" style="background:'+c+';color:#fff" onclick="toggleTimer(\''+ex.id+'\','+pauseSec+','+totalSets+',\''+ex.name.replace(/'/g,"\\'")+'\')">\u23F9</button>';
           h+='</div>';
         }else{
-          h+='<button id="tbtn-'+ex.id+'" class="timer-btn" style="background:'+wk.light+';color:'+c+'" onclick="toggleTimer(\''+ex.id+'\','+pauseSec+','+totalSets+')">\u23F1 '+ex.pause+'</button>';
+          h+='<button id="tbtn-'+ex.id+'" class="timer-btn" style="background:'+wk.light+';color:'+c+'" onclick="toggleTimer(\''+ex.id+'\','+pauseSec+','+totalSets+',\''+ex.name.replace(/'/g,"\\'")+'\')">\u23F1 '+ex.pause+'</button>';
         }
         h+='</div>';
         if(isO&&hist.length>0){
