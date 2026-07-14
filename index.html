@@ -89,41 +89,48 @@ body{font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;background
 .aero-hist-row .aval{font-weight:600;color:var(--text)}
 .aero-hist-row .aact{color:var(--text-med);font-style:italic}
 .report-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:30px}
-.report-header{background:var(--green-dark);padding:14px 16px 12px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:210}
-.report-header h2{color:#fff;font-size:14px;font-weight:700;letter-spacing:1px}
-.btn-close{background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:6px 12px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600}
-.report-content{padding:12px}
-.week-nav{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 0}
-.week-nav button{background:var(--green);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.report-header{background:linear-gradient(135deg,#1a237e,#4a148c);padding:16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:210}
+.report-header h2{color:#fff;font-size:15px;font-weight:800;letter-spacing:1.5px}
+.btn-close{background:rgba(255,255,255,.15);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600;backdrop-filter:blur(4px)}
+.report-content{padding:14px}
+.week-nav{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 0 12px}
+.week-nav button{background:linear-gradient(135deg,#4a148c,#7b1fa2);color:#fff;border:none;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .week-nav button:disabled{opacity:.3}
-.week-nav .week-label{font-size:13px;font-weight:600;color:var(--text);min-width:160px;text-align:center}
-.section-title{font-size:13px;font-weight:700;color:var(--green-dark);margin:16px 0 8px;padding-left:4px;letter-spacing:.5px;text-transform:uppercase}
-.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
-.day-cell{background:var(--card);border-radius:8px;padding:8px 4px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.week-nav .week-label{font-size:13px;font-weight:700;color:var(--text);min-width:160px;text-align:center}
+.section-title{font-size:12px;font-weight:800;color:#4a148c;margin:18px 0 10px;padding-left:4px;letter-spacing:1px;text-transform:uppercase}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.day-cell{background:var(--card);border-radius:10px;padding:8px 4px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .2s}
 .day-cell .dc-day{font-size:9px;font-weight:700;color:var(--text-light);letter-spacing:.5px}
 .day-cell .dc-icon{font-size:18px;margin:4px 0}
 .day-cell .dc-status{font-size:8px;font-weight:600}
-.day-cell.done{border:2px solid var(--green)}.day-cell.missed{opacity:.5}
-.summary-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.sum-card{background:var(--card);border-radius:10px;padding:12px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.sum-card .val{font-size:22px;font-weight:700;line-height:1.2}
-.sum-card .lbl{font-size:10px;color:var(--text-light);font-weight:500;margin-top:2px}
-.sum-card .delta{font-size:11px;font-weight:600;margin-top:4px}
-.prog-card{background:var(--card);border-radius:10px;padding:10px 12px;margin-bottom:6px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.prog-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px}
-.prog-bars{display:flex;align-items:flex-end;gap:3px;height:40px}
-.prog-bar{flex:1;border-radius:3px 3px 0 0;position:relative;transition:height .3s}
-.prog-bar .pb-val{position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:600;white-space:nowrap}
-.prog-bar .pb-wk{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--text-light)}
-.ac-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.ac-row .ac-label{font-size:10px;color:var(--text-light);min-width:40px}
-.ac-row .ac-bar-bg{flex:1;height:14px;background:var(--bg);border-radius:7px;overflow:hidden}
-.ac-row .ac-bar{height:100%;border-radius:7px;transition:width .3s}
-.ac-row .ac-val{font-size:11px;font-weight:600;min-width:50px;text-align:right}
-.aero-compare{background:var(--card);border-radius:10px;padding:12px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-.aero-compare .ac-title{font-size:12px;font-weight:600;margin-bottom:8px}
-.share-btn{width:100%;padding:14px;background:var(--green-dark);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:12px;letter-spacing:.5px}
-.share-btn:active{opacity:.8}
+.day-cell.done{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #4CAF50}.day-cell.missed{opacity:.4}
+.summary-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sum-card{background:var(--card);border-radius:12px;padding:14px 10px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);position:relative;overflow:hidden}
+.sum-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.sum-card.sc-green::before{background:linear-gradient(90deg,#4CAF50,#81C784)}
+.sum-card.sc-orange::before{background:linear-gradient(90deg,#FF9800,#FFB74D)}
+.sum-card.sc-blue::before{background:linear-gradient(90deg,#1976D2,#64B5F6)}
+.sum-card.sc-purple::before{background:linear-gradient(90deg,#7B1FA2,#BA68C8)}
+.sum-card.sc-red::before{background:linear-gradient(90deg,#D32F2F,#EF5350)}
+.sum-card .val{font-size:24px;font-weight:800;line-height:1.1}
+.sum-card .lbl{font-size:10px;color:var(--text-light);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.sum-card .delta{font-size:11px;font-weight:700;margin-top:4px}
+.sum-card .avg-line{font-size:9px;color:var(--text-light);margin-top:2px}
+.prog-card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.prog-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px}
+.prog-bars{display:flex;align-items:flex-end;gap:4px;height:45px}
+.prog-bar{flex:1;border-radius:4px 4px 0 0;position:relative;transition:height .5s ease}
+.prog-bar .pb-val{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:700;white-space:nowrap}
+.prog-bar .pb-wk{position:absolute;bottom:-13px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--text-light)}
+.vol-card{background:linear-gradient(135deg,#1a237e,#283593);border-radius:12px;padding:14px;margin-bottom:8px;color:#fff}
+.vol-card .vol-title{font-size:11px;font-weight:700;opacity:.7;text-transform:uppercase;letter-spacing:1px}
+.vol-card .vol-val{font-size:28px;font-weight:800;margin:4px 0}
+.vol-card .vol-sub{font-size:11px;opacity:.6}
+.vol-card .vol-delta{font-size:12px;font-weight:700;margin-top:4px}
+.pbar-wrap{background:rgba(255,255,255,.1);border-radius:6px;height:8px;margin-top:8px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:6px;transition:width .5s ease}
+.share-btn{width:100%;padding:14px;background:linear-gradient(135deg,#4a148c,#7b1fa2);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:14px;letter-spacing:.5px}
+.share-btn:active{transform:scale(.98)}
 .no-data{text-align:center;padding:30px;color:var(--text-light);font-size:13px}
 
 .series-row{display:flex;align-items:center;gap:6px;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0;justify-content:space-between}
@@ -149,6 +156,22 @@ body{font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;background
 .obs-field::placeholder{color:var(--text-light)}
 .weight-delta{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;margin-left:6px}
 .weight-prev{font-size:10px;color:var(--text-light);margin-left:4px}
+
+.date-picker-row{display:flex;align-items:center;gap:8px;margin:8px 0 12px;padding:8px 12px;background:var(--card);border-radius:10px;border:1px solid var(--border)}
+.date-picker-row label{font-size:12px;font-weight:600;color:var(--text-med);white-space:nowrap}
+.date-picker-row input[type=date]{flex:1;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--bg)}
+.img-modal-overlay{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.img-modal-overlay img{max-width:92vw;max-height:85vh;border-radius:12px;object-fit:contain}
+.card-img{cursor:pointer}
+.diff-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+.diff-btn{border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;opacity:.5;transition:all .2s}
+.diff-btn.active{opacity:1;color:#fff}
+.diff-btn:nth-child(2){background:#4CAF50}
+.diff-btn:nth-child(3){background:#FFC107;color:#333!important}
+.diff-btn:nth-child(4){background:#F44336}
+.aero-type-row{display:flex;gap:6px;margin:8px 0}
+.aero-type-btn{border:2px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;background:var(--card);transition:all .2s;flex:1;text-align:center}
+.aero-type-btn.active{color:#fff}
 </style>
 </head>
 <body>
@@ -156,17 +179,14 @@ body{font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;background
 <div id="flash-overlay" class="flash-overlay"></div>
 <div id="floating-timer" style="display:none"></div>
 <script>
-var GYM={"TER":{title:"Peito + Tríceps",day:"Terça",color:"#2D6A4F",light:"#E8F5E9",type:"gym",groups:[{name:"Peito",exercises:[{id:"chest_press",name:"Supino na máquina (Chest Press)",subs:"Supino reto c/ halteres · Supino reto c/ barra",series:"3×12",pause:"60s",tips:["Costas e quadril colados no encosto — pés firmes no chão", "Empurre à frente sem travar cotovelos; retorne em 3s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg"},{id:"peck_deck",name:"Voador (Peck Deck)",subs:"Crucifixo c/ halteres · Crossover na polia",series:"3×12",pause:"45s",tips:["Cotovelos levemente flexionados durante todo o arco", "Feche até as pegadas se encontrarem; abra até leve alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butterfly/0.jpg"},{id:"incline_press",name:"Supino inclinado na maquina",subs:"Supino inclinado c/ halteres · Supino inclinado no Smith",series:"3×12",pause:"60s",tips:["Ajuste o banco da maquina a ~30°, costas e quadril bem apoiados","Empurre para cima e a frente sem travar cotovelos; desça controlado ate sentir leve alongamento no peitoral superior","Foco: peitoral superior (clavicular) — segure 1s no topo contraindo"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg"}]},{name:"Tríceps",exercises:[{id:"tri_machine",name:"Tríceps na máquina (extensão sentado)",subs:"Tríceps pulley c/ barra reta · Tríceps mergulho no graviton",series:"3×12",pause:"45s",tips:["Cotovelos fixos, alinhados com os ombros — não abra", "Estenda completamente; retorne devagar sem bater o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_One_Arm_Tricep_Extension/0.jpg"},{id:"tri_pulley",name:"Tríceps pulley com corda",subs:"Tríceps pulley c/ barra reta · Tríceps na máquina",series:"3×12",pause:"45s",tips:["Cotovelos grudados ao corpo — não incline o tronco", "Empurre para baixo e abra as pontas da corda no final"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown_-_Rope_Attachment/0.jpg"},{id:"tri_testa",name:"Tríceps testa com halteres (banco reto)",subs:"Tríceps francês unilateral · Mergulho no banco",series:"3×12",pause:"45s",tips:["Deitado no banco, cotovelos apontando para o teto, fixos", "Flexione apenas os cotovelos descendo até a testa; estenda de volta"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg"}]}]},"QUI":{title:"Costas + Bíceps",day:"Quinta",color:"#264653",light:"#E3EFF3",type:"gym",groups:[{name:"Costas",exercises:[{id:"lat_pull",name:"Puxada frontal (Lat Pulldown)",subs:"Puxada no graviton · Puxada c/ triângulo",series:"3×12",pause:"60s",tips:["Pegada pronada, pouco mais larga que os ombros", "Projete o peito para cima ao puxar; estenda totalmente ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg"},{id:"seated_row",name:"Remada sentada na polia (cabo)",subs:"Remada articulada (máquina) · Remada cavalinho",series:"3×12",pause:"60s",tips:["Tronco ereto o tempo todo — NÃO balance para trás", "Puxe apertando as escápulas; retorne sentindo o alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg"},{id:"hammer_row",name:"Remada sentada na maquina",subs:"Remada cavalinho · Remada articulada (Hammer)",series:"3×12",pause:"60s",tips:["Peito apoiado no pad frontal — protege totalmente a lombar","Puxe os pegadores trazendo os cotovelos para tras ate apertar as escapulas; retorne controlado","Foco: dorsal medio, romboides, trapezio medio — mantenha ombros baixos, nao encolha"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg"},{id:"face_pull",name:"Face Pull na polia (corda)",subs:"Face Pull c/ elástico · Crucifixo inverso",series:"3×15",pause:"45s",tips:["Polia na altura da cabeca, segure a corda com pegada neutra (polegares pra voce)","Puxe a corda em direcao ao rosto, ABRINDO os cotovelos para fora e para cima","Foco: deltoide posterior + trapezio medio + rotadores externos — excelente para postura"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Face_Pull/0.jpg"}]},{name:"Bíceps",exercises:[{id:"preacher",name:"Rosca Scott na máquina (Preacher)",subs:"Rosca Scott c/ barra W · Rosca direta c/ halteres",series:"3×12",pause:"45s",tips:["Braços apoiados no pad, axilas na borda superior", "Desça controlando sem estender 100% (protege cotovelo)"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg"},{id:"bicep_curl",name:"Rosca alternada com halteres",subs:"Rosca na polia baixa · Rosca na máquina",series:"3×12",pause:"45s",tips:["Sentado com encosto para proteger a lombar", "Cotovelo fixo ao lado do corpo — se balançar, reduza o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bicep_Curl/0.jpg"},{id:"hammer_curl",name:"Rosca martelo com halteres",subs:"Rosca martelo na polia (corda) · Rosca punho neutro",series:"3×12",pause:"45s",tips:["Pegada neutra (palmas voltadas uma para a outra)", "Trabalha braquiorradial + bíceps externo; pode fazer sentado"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg"}]}]},"SAB":{title:"Pernas + Ombros + Abdômen",day:"Sábado",color:"#C65D3E",light:"#FFF0EB",type:"gym",groups:[{name:"Pernas (adaptado p/ lombar)",exercises:[{id:"leg_ext",name:"Cadeira extensora",subs:"Extensão na polia (caneleira) · Afundo c/ halteres leves",series:"3×15",pause:"60s",tips:["Ajuste o encosto para que o joelho fique alinhado com o eixo de rotacao da maquina","Estenda as pernas totalmente e SEGURE 1s no topo contraindo o quadriceps","Foco: quadriceps (reto femoral + vasto) — desca controlado, nao deixe o peso bater"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg"},{id:"leg_curl",name:"Mesa flexora (deitado)",subs:"Cadeira flexora (sentado) · Flexão na polia (caneleira)",series:"3×12",pause:"60s",tips:["Deitado de barriga para baixo, quadril colado no banco (nao levante)","Flexione trazendo os calcanhares em direcao ao gluteo; segure 1s no topo","Foco: isquiotibiais + panturrilha — desca em 2-3s controlando a fase negativa"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg"},{id:"hip_abd",name:"Abdução de quadril (máquina)",subs:"Abdução c/ mini band · Abdução na polia baixa",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, joelhos alinhados com o eixo da maquina","Abra as pernas controlando, segure 1s na abertura maxima","Foco: gluteo medio + minimo — a fase de FECHAR (retorno) tambem trabalha, va devagar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/0.jpg"},{id:"hip_add",name:"Adução de quadril (máquina)",subs:"Adução na polia baixa · Adução c/ bola entre joelhos",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, pernas abertas na posicao inicial da maquina","Feche as pernas controlando, aperte 1s na contracao maxima","Foco: adutor longo + magno — abra devagar ate sentir leve alongamento na regiao interna"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/0.jpg"},{id:"calf",name:"Panturrilha sentada (máquina)",subs:"Panturrilha em pé (máquina) · Panturrilha no Smith",series:"3×15",pause:"45s",tips:["Joelhos a 90°, pontas dos pes na plataforma com calcanhares livres","Suba na PONTA dos pes o maximo possivel e segure 2s no topo","Foco: soleo (panturrilha profunda) — desca ABAIXO da plataforma para alongar completamente"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg"}]},{name:"Ombros",exercises:[{id:"shoulder_press",name:"Desenvolvimento na máquina",subs:"Desenvolvimento c/ halteres sentado · Desenvolvimento no Smith",series:"3×12",pause:"60s",tips:["Ajuste o assento para que os pegadores fiquem na altura dos ombros","Costas apoiadas no encosto a ~80°; empurre para cima sem travar cotovelos","Foco: deltoide anterior + medio + triceps — desca ate cotovelos na linha dos ombros"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/0.jpg"},{id:"lat_raise",name:"Elevação lateral (halteres ou cabo)",subs:"Elevação lateral na máquina · Elevação lateral na polia",series:"3×15",pause:"45s",tips:["Em pe ou sentado, halteres ao lado do corpo com leve flexao nos cotovelos","Eleve lateralmente ate a ALTURA dos ombros (nao acima!) com controle total","Foco: deltoide medio (largura dos ombros) — cargas LEVES com execucao perfeita"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg"}]},{name:"Abdômen",exercises:[{id:"crunch_m",name:"Abdominal na máquina (Crunch)",subs:"Prancha frontal (30-45s) · Abdominal no cabo (polia alta)",series:"3×15",pause:"30s",tips:["Ajuste o assento e o peso; segure os pegadores sem puxar com os bracos","Contraia o ABDOMEN para flexionar o tronco — o movimento vem do core, nao dos bracos","Foco: reto abdominal (parte superior) — expire ao contrair, inspire ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Crunches/0.jpg"},{id:"side_plank",name:"Prancha lateral (isometria)",subs:"Rotação russa c/ peso · Flexão lateral no cabo",series:"3x20s/lado",pause:"30s",tips:["Apoie o antebraco no chao com cotovelo abaixo do ombro; pes empilhados ou defasados","Eleve o quadril formando linha reta dos pes a cabeca — contraia abdomen + gluteo","Foco: obliquos + transverso + quadrado lombar — se 20s for facil, aumente para 30s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Bridge/0.jpg"}]}]}};
+var GYM={"A":{title:"Peito + Tríceps + Abdômen",color:"#2D6A4F",light:"#E8F5E9",type:"gym",groups:[{name:"Peito",exercises:[{id:"chest_press",name:"Supino na máquina (Chest Press)",subs:"Supino reto c/ halteres · Supino reto c/ barra",series:"3×12",pause:"60s",tips:["Costas e quadril colados no encosto — pés firmes no chão", "Empurre à frente sem travar cotovelos; retorne em 3s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg"},{id:"peck_deck",name:"Voador (Peck Deck)",subs:"Crucifixo c/ halteres · Crossover na polia",series:"3×12",pause:"45s",tips:["Cotovelos levemente flexionados durante todo o arco", "Feche até as pegadas se encontrarem; abra até leve alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Butterfly/0.jpg"},{id:"incline_press",name:"Supino inclinado na maquina",subs:"Supino inclinado c/ halteres · Supino inclinado no Smith",series:"3×12",pause:"60s",tips:["Ajuste o banco da maquina a ~30°, costas e quadril bem apoiados","Empurre para cima e a frente sem travar cotovelos; desça controlado ate sentir leve alongamento no peitoral superior","Foco: peitoral superior (clavicular) — segure 1s no topo contraindo"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg"}]},{name:"Tríceps",exercises:[{id:"tri_machine",name:"Tríceps na máquina (extensão sentado)",subs:"Tríceps pulley c/ barra reta · Tríceps mergulho no graviton",series:"3×12",pause:"45s",tips:["Cotovelos fixos, alinhados com os ombros — não abra", "Estenda completamente; retorne devagar sem bater o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_One_Arm_Tricep_Extension/0.jpg"},{id:"tri_pulley",name:"Tríceps pulley com corda",subs:"Tríceps pulley c/ barra reta · Tríceps na máquina",series:"3×12",pause:"45s",tips:["Cotovelos grudados ao corpo — não incline o tronco", "Empurre para baixo e abra as pontas da corda no final"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Triceps_Pushdown_-_Rope_Attachment/0.jpg"},{id:"tri_testa",name:"Tríceps testa com halteres (banco reto)",subs:"Tríceps francês unilateral · Mergulho no banco",series:"3×12",pause:"45s",tips:["Deitado no banco, cotovelos apontando para o teto, fixos", "Flexione apenas os cotovelos descendo até a testa; estenda de volta"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Triceps_Press/0.jpg"}]},{name:"Abdômen",exercises:[{id:"plank_a",name:"Prancha frontal (isometria)",subs:"Prancha com apoio nos joelhos · Prancha com elevação de perna",series:"3×30s",pause:"30s",tips:["Apoie antebraços e pontas dos pés no chão, corpo em linha reta","Contraia abdômen e glúteo — NÃO deixe o quadril subir ou descer","Foco: transverso abdominal + reto abdominal — respire normalmente, não prenda o ar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Plank/0.jpg"}]}]},"B":{title:"Costas + Bíceps + Abdômen",color:"#264653",light:"#E3EFF3",type:"gym",groups:[{name:"Costas",exercises:[{id:"lat_pull",name:"Puxada frontal (Lat Pulldown)",subs:"Puxada no graviton · Puxada c/ triângulo",series:"3×12",pause:"60s",tips:["Pegada pronada, pouco mais larga que os ombros", "Projete o peito para cima ao puxar; estenda totalmente ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg"},{id:"sup_pulldown",name:"Puxada supinada (pegada estreita)",subs:"Puxada no graviton supinada · Rosca direta na barra",series:"3×12",pause:"60s",tips:["Tronco ereto o tempo todo — NÃO balance para trás", "Puxe apertando as escápulas; retorne sentindo o alongamento"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Cable_Rows/0.jpg"},{id:"machine_row",name:"Remada sentada na maquina",subs:"Remada cavalinho · Remada articulada (Hammer)",series:"3×12",pause:"60s",tips:["Peito apoiado no pad frontal — protege totalmente a lombar","Puxe os pegadores trazendo os cotovelos para tras ate apertar as escapulas; retorne controlado","Foco: dorsal medio, romboides, trapezio medio — mantenha ombros baixos, nao encolha"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lever_Seated_Row/0.jpg"},{id:"face_pull",name:"Face Pull na polia (corda)",subs:"Face Pull c/ elástico · Crucifixo inverso",series:"3×15",pause:"45s",tips:["Polia na altura da cabeca, segure a corda com pegada neutra (polegares pra voce)","Puxe a corda em direcao ao rosto, ABRINDO os cotovelos para fora e para cima","Foco: deltoide posterior + trapezio medio + rotadores externos — excelente para postura"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Face_Pull/0.jpg"}]},{name:"Bíceps",exercises:[{id:"preacher",name:"Rosca Scott na máquina (Preacher)",subs:"Rosca Scott c/ barra W · Rosca direta c/ halteres",series:"3×12",pause:"45s",tips:["Braços apoiados no pad, axilas na borda superior", "Desça controlando sem estender 100% (protege cotovelo)"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Preacher_Curl/0.jpg"},{id:"bicep_curl",name:"Rosca alternada com halteres",subs:"Rosca na polia baixa · Rosca na máquina",series:"3×12",pause:"45s",tips:["Sentado com encosto para proteger a lombar", "Cotovelo fixo ao lado do corpo — se balançar, reduza o peso"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bicep_Curl/0.jpg"},{id:"hammer_curl",name:"Rosca martelo com halteres",subs:"Rosca martelo na polia (corda) · Rosca punho neutro",series:"3×12",pause:"45s",tips:["Pegada neutra (palmas voltadas uma para a outra)", "Trabalha braquiorradial + bíceps externo; pode fazer sentado"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg"}]},{name:"Abdômen",exercises:[{id:"leg_raise_b",name:"Elevação de pernas (banco ou suspenso)",subs:"Abdominal infra no solo · Tesoura deitado",series:"3×15",pause:"30s",tips:["Deitado no banco ou suspenso na barra, pernas estendidas","Eleve as pernas até 90° contraindo o abdômen inferior, desça controlado","Foco: reto abdominal inferior — não use impulso, controle total na descida"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hanging_Leg_Raise/0.jpg"}]}]},"C":{title:"Pernas + Ombros + Abdômen",color:"#C65D3E",light:"#FFF0EB",type:"gym",groups:[{name:"Pernas (adaptado p/ lombar)",exercises:[{id:"leg_ext",name:"Cadeira extensora",subs:"Extensão na polia (caneleira) · Afundo c/ halteres leves",series:"3×15",pause:"60s",tips:["Ajuste o encosto para que o joelho fique alinhado com o eixo de rotacao da maquina","Estenda as pernas totalmente e SEGURE 1s no topo contraindo o quadriceps","Foco: quadriceps (reto femoral + vasto) — desca controlado, nao deixe o peso bater"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Leg_Extensions/0.jpg"},{id:"leg_curl",name:"Mesa flexora (deitado)",subs:"Cadeira flexora (sentado) · Flexão na polia (caneleira)",series:"3×12",pause:"60s",tips:["Deitado de barriga para baixo, quadril colado no banco (nao levante)","Flexione trazendo os calcanhares em direcao ao gluteo; segure 1s no topo","Foco: isquiotibiais + panturrilha — desca em 2-3s controlando a fase negativa"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Lying_Leg_Curls/0.jpg"},{id:"hip_abd",name:"Abdução de quadril (máquina)",subs:"Abdução c/ mini band · Abdução na polia baixa",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, joelhos alinhados com o eixo da maquina","Abra as pernas controlando, segure 1s na abertura maxima","Foco: gluteo medio + minimo — a fase de FECHAR (retorno) tambem trabalha, va devagar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Abductor/0.jpg"},{id:"hip_add",name:"Adução de quadril (máquina)",subs:"Adução na polia baixa · Adução c/ bola entre joelhos",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, pernas abertas na posicao inicial da maquina","Feche as pernas controlando, aperte 1s na contracao maxima","Foco: adutor longo + magno — abra devagar ate sentir leve alongamento na regiao interna"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Thigh_Adductor/0.jpg"},{id:"calf",name:"Panturrilha sentada (máquina)",subs:"Panturrilha em pé (máquina) · Panturrilha no Smith",series:"3×15",pause:"45s",tips:["Joelhos a 90°, pontas dos pes na plataforma com calcanhares livres","Suba na PONTA dos pes o maximo possivel e segure 2s no topo","Foco: soleo (panturrilha profunda) — desca ABAIXO da plataforma para alongar completamente"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Calf_Raise/0.jpg"}]},{name:"Ombros",exercises:[{id:"shoulder_press",name:"Desenvolvimento na máquina",subs:"Desenvolvimento c/ halteres sentado · Desenvolvimento no Smith",series:"3×12",pause:"60s",tips:["Ajuste o assento para que os pegadores fiquem na altura dos ombros","Costas apoiadas no encosto a ~80°; empurre para cima sem travar cotovelos","Foco: deltoide anterior + medio + triceps — desca ate cotovelos na linha dos ombros"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Seated_Barbell_Military_Press/0.jpg"},{id:"lat_raise",name:"Elevação lateral (halteres ou cabo)",subs:"Elevação lateral na máquina · Elevação lateral na polia",series:"3×15",pause:"45s",tips:["Em pe ou sentado, halteres ao lado do corpo com leve flexao nos cotovelos","Eleve lateralmente ate a ALTURA dos ombros (nao acima!) com controle total","Foco: deltoide medio (largura dos ombros) — cargas LEVES com execucao perfeita"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Lateral_Raise/0.jpg"}]},{name:"Abdômen",exercises:[{id:"crunch_m",name:"Abdominal na máquina (Crunch)",subs:"Prancha frontal (30-45s) · Abdominal no cabo (polia alta)",series:"3×15",pause:"30s",tips:["Ajuste o assento e o peso; segure os pegadores sem puxar com os bracos","Contraia o ABDOMEN para flexionar o tronco — o movimento vem do core, nao dos bracos","Foco: reto abdominal (parte superior) — expire ao contrair, inspire ao voltar"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Crunches/0.jpg"},{id:"side_plank",name:"Prancha lateral (isometria)",subs:"Rotação russa c/ peso · Flexão lateral no cabo",series:"3x20s/lado",pause:"30s",tips:["Apoie o antebraco no chao com cotovelo abaixo do ombro; pes empilhados ou defasados","Eleve o quadril formando linha reta dos pes a cabeca — contraia abdomen + gluteo","Foco: obliquos + transverso + quadrado lombar — se 20s for facil, aumente para 30s"],img:"https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Bridge/0.jpg"}]}]}};
 
 
 var TABS=[
-  {key:"SEG",icon:"\ud83c\udfbe",label:"Tenis",color:"#7B2D8E",light:"#F3E5F5",type:"aero",aeroId:"tennis_mon",aeroName:"Tenis"},
-  {key:"TER",icon:"\ud83c\udfcb\ufe0f",label:"Treino A",color:"#2D6A4F",light:"#E8F5E9",type:"gym",gymKey:"TER",aeroId:"aero_ter"},
-  {key:"QUA",icon:"\ud83c\udfc3",label:"Corrida",color:"#00796B",light:"#E0F2F1",type:"aero",aeroId:"run_wed",aeroName:"Corrida"},
-  {key:"QUI",icon:"\ud83c\udfcb\ufe0f",label:"Treino B",color:"#264653",light:"#E3EFF3",type:"gym",gymKey:"QUI",aeroId:"aero_qui"},
-  {key:"SEX",icon:"\ud83c\udfbe",label:"Tenis",color:"#7B2D8E",light:"#F3E5F5",type:"aero",aeroId:"tennis_fri",aeroName:"Tenis"},
-  {key:"SAB",icon:"\ud83c\udfcb\ufe0f",label:"Treino C",color:"#C65D3E",light:"#FFF0EB",type:"gym",gymKey:"SAB",aeroId:"aero_sab"},
-  {key:"DOM",icon:"\u26a1",label:"Livre",color:"#E65100",light:"#FFF3E0",type:"free",aeroId:"free_sun"}
+  {key:"A",icon:"\ud83c\udfcb\ufe0f",label:"Ficha A",color:"#2D6A4F",light:"#E8F5E9",type:"gym",gymKey:"A",aeroId:"aero_a"},
+  {key:"B",icon:"\ud83c\udfcb\ufe0f",label:"Ficha B",color:"#264653",light:"#E3EFF3",type:"gym",gymKey:"B",aeroId:"aero_b"},
+  {key:"C",icon:"\ud83c\udfcb\ufe0f",label:"Ficha C",color:"#C65D3E",light:"#FFF0EB",type:"gym",gymKey:"C",aeroId:"aero_c"},
+  {key:"ATIV",icon:"\u26a1",label:"Atividade",color:"#7B2D8E",light:"#F3E5F5",type:"aero",aeroId:"atividade",aeroName:"Atividade"}
 ];
 
 var SK="treino_full_v2";
@@ -178,27 +198,118 @@ function load(){try{var s=localStorage.getItem(SK);if(s){var d=JSON.parse(s);try
 function save(d){try{var s=JSON.stringify(d);localStorage.setItem(SK,s);try{localStorage.setItem(SK_BK,s)}catch(e){}return true}catch(e){return false}}
 function countE(d){var n=0;for(var k in d){if(Array.isArray(d[k]))n+=d[k].length}return n}
 
-var S={tab:"SEG",data:load(),wts:{},aero:{},obs:{},hist:null,sets:false,imp:false,toast:null,clr:false};
+var S={tab:"A",data:load(),wts:{},aero:{},obs:{},hist:null,sets:false,imp:false,toast:null,clr:false,saveDate:null};
 var R={open:false,weekOffset:0};
+S.tab="A";
 
-// Auto-select today
-var dayMap={0:"DOM",1:"SEG",2:"TER",3:"QUA",4:"QUI",5:"SEX",6:"SAB"};
-S.tab=dayMap[new Date().getDay()]||"SEG";
-
-// Migrate old series keys (sets_exId_YYYY-MM-DD → sets_exId)
+// ===== COMPREHENSIVE DATA MIGRATION =====
 (function(){
-  var migrated=false;
-  for(var k in S.data){
-    if(k.match(/^sets_.*_\d{4}-\d{2}-\d{2}$/)){
-      var parts=k.split("_");var date=parts.pop();var newKey=parts.join("_");
-      if(!S.data[newKey])S.data[newKey]=[];
-      var entries=S.data[k];
-      if(Array.isArray(entries)){for(var i=0;i<entries.length;i++){S.data[newKey].push(entries[i])}}
-      delete S.data[k];migrated=true;
+  var d=S.data,migrated=false;
+
+  // Track data version
+  var DATA_VERSION=3;
+  if((d._version||0)<DATA_VERSION){
+
+    // --- Migrate old series keys (sets_exId_YYYY-MM-DD → sets_exId) ---
+    for(var k in d){
+      if(k.match(/^sets_.*_\d{4}-\d{2}-\d{2}$/)){
+        var parts=k.split("_");parts.pop();var newKey=parts.join("_");
+        if(!d[newKey])d[newKey]=[];
+        if(Array.isArray(d[k])){for(var i=0;i<d[k].length;i++){d[newKey].push(d[k][i])}}
+        delete d[k];migrated=true;
+      }
     }
+
+    // --- Migrate renamed exercise IDs ---
+    var exMigrations={
+      "seated_row":"sup_pulldown",
+      "hammer_row":"machine_row",
+      "pullover":"face_pull"
+    };
+    for(var oldId in exMigrations){
+      var newId=exMigrations[oldId];
+      // Migrate weight history
+      if(d[oldId]&&d[oldId].length>0){
+        if(!d[newId])d[newId]=[];
+        for(var i=0;i<d[oldId].length;i++){
+          var exists=false;
+          for(var j=0;j<d[newId].length;j++){if(d[newId][j].date===d[oldId][i].date){exists=true;break}}
+          if(!exists)d[newId].push(d[oldId][i]);
+        }
+        migrated=true;
+      }
+      // Migrate sets, diff, obs prefixed keys
+      var prefixes=["sets_","diff_","obs_"];
+      for(var p=0;p<prefixes.length;p++){
+        var okk=prefixes[p]+oldId,nkk=prefixes[p]+newId;
+        if(d[okk]&&d[okk].length>0){
+          if(!d[nkk])d[nkk]=[];
+          for(var i=0;i<d[okk].length;i++){d[nkk].push(d[okk][i])}
+          migrated=true;
+        }
+      }
+    }
+
+    // --- Migrate aero keys (old day-based → new ficha-based) ---
+    var aeroMigrations={"aero_ter":"aero_a","aero_qui":"aero_b","aero_sab":"aero_c"};
+    for(var oKey in aeroMigrations){
+      var nKey=aeroMigrations[oKey];
+      if(d[oKey]&&d[oKey].length>0){
+        if(!d[nKey])d[nKey]=[];
+        for(var i=0;i<d[oKey].length;i++){
+          var exists=false;
+          for(var j=0;j<d[nKey].length;j++){if(d[nKey][j].date===d[oKey][i].date){exists=true;break}}
+          if(!exists)d[nKey].push(d[oKey][i]);
+        }
+        migrated=true;
+      }
+    }
+    // Merge legacy aero into "atividade"
+    var legacyAeroKeys=["tennis_mon","tennis_fri","run_wed","free_sun"];
+    for(var la=0;la<legacyAeroKeys.length;la++){
+      var lk=legacyAeroKeys[la];
+      if(d[lk]&&d[lk].length>0){
+        if(!d["atividade"])d["atividade"]=[];
+        for(var i=0;i<d[lk].length;i++){
+          var exists=false;
+          for(var j=0;j<d["atividade"].length;j++){if(d["atividade"][j].date===d[lk][i].date){exists=true;break}}
+          if(!exists){
+            var entry=JSON.parse(JSON.stringify(d[lk][i]));
+            if(!entry.tipo){
+              if(lk.indexOf("tennis")>=0)entry.tipo="tenis";
+              else if(lk.indexOf("run")>=0)entry.tipo="corrida";
+              else entry.tipo="misto";
+            }
+            d["atividade"].push(entry);
+          }
+        }
+        migrated=true;
+      }
+    }
+
+    // --- Migrate snapshot exercise IDs ---
+    if(d._snapshots){
+      for(var si=0;si<d._snapshots.length;si++){
+        var snap=d._snapshots[si];
+        if(snap.exercises){
+          for(var oldE in exMigrations){
+            if(snap.exercises[oldE]!==undefined&&snap.exercises[exMigrations[oldE]]===undefined){
+              snap.exercises[exMigrations[oldE]]=snap.exercises[oldE];
+              migrated=true;
+            }
+          }
+        }
+      }
+    }
+
+    d._version=DATA_VERSION;
+    migrated=true;
   }
-  if(migrated)save(S.data);
+
+  if(migrated){S.data=d;save(d)}
 })();
+
+// (auto-sync defined after getSyncUrl below)
 
 
 // ===== TIMER (timestamp-based for background support) =====
@@ -350,6 +461,47 @@ function parseSeriesCount(seriesStr){
   return m?parseInt(m[1]):3;
 }
 
+
+// ===== IMAGE MODAL =====
+function showImgModal(src){
+  var ov=document.createElement("div");
+  ov.className="img-modal-overlay";
+  ov.onclick=function(){document.body.removeChild(ov)};
+  var img=document.createElement("img");
+  img.src=src;img.alt="Exercicio";
+  ov.appendChild(img);document.body.appendChild(ov);
+}
+
+// ===== DIFFICULTY LEVEL =====
+function getDifficulty(exId){
+  var k="diff_"+exId;var entries=S.data[k]||[];
+  for(var i=entries.length-1;i>=0;i--){if(entries[i].date===getSaveDate())return entries[i].level}
+  // Return last recorded if none today
+  if(entries.length>0)return entries[entries.length-1].level;
+  return "";
+}
+function setDifficulty(exId,level){
+  var k="diff_"+exId;
+  if(!S.data[k])S.data[k]=[];
+  var idx=-1;var dt=getSaveDate();
+  for(var i=0;i<S.data[k].length;i++){if(S.data[k][i].date===dt){idx=i;break}}
+  if(idx>=0)S.data[k][idx]={date:dt,level:level};
+  else S.data[k].push({date:dt,level:level});
+  save(S.data);render();
+}
+
+// ===== DATE HELPER =====
+function getSaveDate(){return S.saveDate||todayStr()}
+function setSaveDate(v){S.saveDate=v;render()}
+function getDayName(dateStr){
+  var dias=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+  var d=new Date(dateStr+"T12:00:00");return dias[d.getDay()];
+}
+function fmtDateFull(dateStr){
+  var p=dateStr.split("-");
+  return getDayName(dateStr)+", "+p[2]+"/"+p[1]+"/"+p[0];
+}
+
 function flash(m){S.toast=m;render();setTimeout(function(){S.toast=null;render()},2500)}
 function getLast(id){var e=S.data[id];return e&&e.length?e[e.length-1]:null}
 function getHist(id){return(S.data[id]||[]).slice(-10)}
@@ -442,7 +594,7 @@ function showPace(){
 }
 
 function doSaveGym(){
-  var t=todayStr(),tabObj,wk,nd=clone(S.data),any=false;
+  var t=getSaveDate(),tabObj,wk,nd=clone(S.data),any=false;
   for(var i=0;i<TABS.length;i++){if(TABS[i].key===S.tab){tabObj=TABS[i];break}}
   wk=GYM[tabObj.gymKey];
   for(var gi=0;gi<wk.groups.length;gi++){
@@ -486,7 +638,7 @@ function doSaveGym(){
 }
 
 function doSaveAero(){
-  var t=todayStr(),tabObj;
+  var t=getSaveDate(),tabObj;
   for(var i=0;i<TABS.length;i++){if(TABS[i].key===S.tab){tabObj=TABS[i];break}}
   var id=tabObj.aeroId;
   if((!S.aero.dist||parseFloat(S.aero.dist)<=0)&&(!S.aero.mins||parseFloat(S.aero.mins)<=0)&&(!S.aero.kcal||parseFloat(S.aero.kcal)<=0)){
@@ -523,6 +675,17 @@ var SYNC_KEY="treino_sync_url";
 var SYNC_DEFAULT="https://script.google.com/macros/s/AKfycbyf_WkziaTsIh5zgk0-Apc8x86a8lNBDm5H1Hx8Y7BfHfgoM-R2zJ4re-aM_cRgxIfBJQ/exec";
 function getSyncUrl(){return localStorage.getItem(SYNC_KEY)||SYNC_DEFAULT}
 function setSyncUrl(url){localStorage.setItem(SYNC_KEY,url.trim())}
+
+// ===== AUTO-SYNC: every save pushes to cloud silently =====
+var _origSave=save;
+save=function(d){
+  var ok=_origSave(d);
+  var url=getSyncUrl();
+  if(ok&&url){
+    try{fetch(url,{method:"POST",mode:"cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)}).catch(function(){})}catch(e){}
+  }
+  return ok;
+};
 function doSyncPush(){
   var url=getSyncUrl();
   if(!url){flash("Configure a URL de sync primeiro");return}
@@ -578,7 +741,7 @@ function saveWeeklySnapshot(){
     dist:totals.totalDist,mins:totals.totalMins,
     exercises:{}
   };
-  var gymKeys=["TER","QUI","SAB"];
+  var gymKeys=["A","B","C"];
   for(var gk=0;gk<gymKeys.length;gk++){
     var wk=GYM[gymKeys[gk]];
     for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];
@@ -649,7 +812,12 @@ function render(){
 
   if(tabObj.type==="gym"){
     var wk=GYM[tabObj.gymKey];
-    h+='<div class="wk-title" style="color:'+c+'">'+wk.title+'</div><div class="content">';
+    h+='<div class="wk-title" style="color:'+c+'">'+wk.title+'</div>';
+    // Date picker
+    h+='<div class="date-picker-row"><label>\ud83d\udcc5</label>';
+    h+='<input type="date" value="'+getSaveDate()+'" onchange="setSaveDate(this.value)">';
+    h+='<span style="font-size:12px;font-weight:600;color:'+c+'">'+getDayName(getSaveDate())+'</span></div>';
+    h+='<div class="content">';
     for(var gi=0;gi<wk.groups.length;gi++){
       var g=wk.groups[gi];
       h+='<div class="gh" style="background:'+wk.light+';border-left-color:'+c+'">'+g.name+'</div>';
@@ -658,11 +826,18 @@ function render(){
         var last=getLast(ex.id),prog=getProg(ex.id),hist=getHist(ex.id),isO=S.hist===ex.id;
         var cv=S.wts[ex.id]||"";
         h+='<div class="card" id="card-'+ex.id+'"><div class="card-main">';
-        h+='<img class="card-img" src="'+ex.img+'" alt="'+ex.name+'" onerror="this.src=\'\';this.style.background=\''+wk.light+'\';this.style.display=\'flex\';this.style.alignItems=\'center\';this.style.justifyContent=\'center\';this.alt=\'\ud83c\udfcb\ufe0f\'">';
+        h+='<img class="card-img" src="'+ex.img+'" alt="'+ex.name+'" onclick="showImgModal(this.src)" onerror="this.src=\'\';this.style.background=\''+wk.light+'\';this.style.display=\'flex\';this.style.alignItems=\'center\';this.style.justifyContent=\'center\';this.alt=\'\ud83c\udfcb\ufe0f\'">';
         h+='<div class="card-body"><div class="ex-name">'+ex.name+'</div>';
         h+='<div class="ex-subs"><i>Alt:</i> '+ex.subs+'</div>';
         h+='<div class="ex-meta"><span class="badge" style="background:'+wk.light+';color:'+c+'">'+ex.series+'</span>';
         h+='<span class="pause">Pausa: '+ex.pause+'</span></div>';
+        // Difficulty level
+        var curDiff=getDifficulty(ex.id);
+        h+='<div class="diff-row"><span style="font-size:10px;color:var(--text-light)">Dificuldade:</span>';
+        h+='<button class="diff-btn'+(curDiff==="facil"?" active":"")+'" onclick="setDifficulty(\''+ex.id+'\',\'facil\')">Facil</button>';
+        h+='<button class="diff-btn'+(curDiff==="medio"?" active":"")+'" onclick="setDifficulty(\''+ex.id+'\',\'medio\')">Medio</button>';
+        h+='<button class="diff-btn'+(curDiff==="dificil"?" active":"")+'" onclick="setDifficulty(\''+ex.id+'\',\'dificil\')">Dificil</button>';
+        h+='</div>';
         h+='<div class="tips">';
         for(var ti2=0;ti2<ex.tips.length;ti2++){h+='<div class="tip">'+ex.tips[ti2]+'</div>'}
         h+='</div></div></div>';
@@ -741,17 +916,23 @@ function render(){
     h+=renderAeroCard(tabObj.aeroId,c,false,true);
     h+='<button class="save-btn" style="background:'+c+'" onclick="doSaveGym()">Salvar Treino</button>';
 
-  } else if(tabObj.type==="aero"){
-    h+='<div class="aero-hero"><div class="aero-emoji">'+tabObj.icon+'</div>';
-    h+='<div class="wk-title" style="color:'+c+';padding:0">'+tabObj.aeroName+'</div>';
-    h+='<div class="aero-desc">Registre sua sessao de hoje</div></div>';
-    h+=renderAeroCard(tabObj.aeroId,c,false,false);
-    h+='<button class="save-btn" style="background:'+c+'" onclick="doSaveAero()">Salvar Atividade</button>';
-
   } else {
+    // Activity tab with type selector
     h+='<div class="aero-hero"><div class="aero-emoji">'+tabObj.icon+'</div>';
-    h+='<div class="wk-title" style="color:'+c+';padding:0">Atividade Livre</div>';
-    h+='<div class="aero-desc">Registre qualquer atividade</div></div>';
+    h+='<div class="wk-title" style="color:'+c+';padding:0">Atividade</div>';
+    h+='<div class="aero-desc">Selecione o tipo e registre</div></div>';
+    // Date picker
+    h+='<div class="date-picker-row"><label>\ud83d\udcc5</label>';
+    h+='<input type="date" value="'+getSaveDate()+'" onchange="setSaveDate(this.value)">';
+    h+='<span style="font-size:12px;font-weight:600;color:'+c+'">'+getDayName(getSaveDate())+'</span></div>';
+    // Activity type buttons
+    var aeroTypes=[{k:"tenis",label:"\ud83c\udfbe Tenis",col:"#7B2D8E"},{k:"corrida",label:"\ud83c\udfc3 Corrida",col:"#00796B"},{k:"caminhada",label:"\ud83d\udeb6 Caminhada",col:"#795548"},{k:"misto",label:"\u26a1 Misto",col:"#E65100"}];
+    h+='<div class="aero-type-row">';
+    for(var at=0;at<aeroTypes.length;at++){
+      var sel=S.aero.tipo===aeroTypes[at].k;
+      h+='<div class="aero-type-btn'+(sel?" active":"")+'" style="'+(sel?"background:"+aeroTypes[at].col+";border-color:"+aeroTypes[at].col:"")+'" onclick="S.aero.tipo=\''+aeroTypes[at].k+'\';render()">'+aeroTypes[at].label+'</div>';
+    }
+    h+='</div>';
     h+=renderAeroCard(tabObj.aeroId,c,true,false);
     h+='<button class="save-btn" style="background:'+c+'" onclick="doSaveAero()">Salvar Atividade</button>';
   }
@@ -766,22 +947,42 @@ function addDays(ds,n){var d=new Date(ds+"T00:00:00");d.setDate(d.getDate()+n);r
 function getWeekDates(off){var now=new Date();now.setDate(now.getDate()+off*7);var mon=getMonday(now.toISOString().slice(0,10));return [0,1,2,3,4,5,6].map(function(i){return addDays(mon,i)})}
 
 function getWeekTotals(dates){
-  var totalKcal=0,totalMins=0,totalDist=0,sessions=0;
-  for(var i=0;i<TABS.length;i++){
-    var tab=TABS[i],date=dates[i];
-    if(tab.type==="gym"){
-      var wk=GYM[tab.gymKey],any=false;
-      for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];for(var ei=0;ei<g.exercises.length;ei++){
-        var e=(S.data[g.exercises[ei].id]||[]);for(var k=0;k<e.length;k++){if(e[k].date===date)any=true}
-      }}
-      // check gym aero too
-      var ae=(S.data[tab.aeroId]||[]);for(var k=0;k<ae.length;k++){if(ae[k].date===date){any=true;totalKcal+=(ae[k].kcal||0);totalMins+=(ae[k].mins||0);totalDist+=(ae[k].dist||0)}}
-      if(any)sessions++;
-    } else {
-      var id=tab.aeroId;var entries=S.data[id]||[];
-      for(var k=0;k<entries.length;k++){if(entries[k].date===date){sessions++;totalKcal+=(entries[k].kcal||0);totalMins+=(entries[k].mins||0);totalDist+=(entries[k].dist||0)}}
+  var totalKcal=0,totalMins=0,totalDist=0,gymDays={},aeroDays={};
+  // Scan all gym exercises across all fichas
+  var gymKeys=["A","B","C"];
+  for(var gk=0;gk<gymKeys.length;gk++){
+    var wk=GYM[gymKeys[gk]];
+    for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];
+      for(var ei=0;ei<g.exercises.length;ei++){
+        var entries=S.data[g.exercises[ei].id]||[];
+        for(var k=0;k<entries.length;k++){if(dates.indexOf(entries[k].date)>=0)gymDays[entries[k].date]=true}
+      }
     }
   }
+  // Scan aero data
+  var aeroKeys=["aero_a","aero_b","aero_c","atividade"];
+  for(var ai=0;ai<aeroKeys.length;ai++){
+    var entries=S.data[aeroKeys[ai]]||[];
+    for(var k=0;k<entries.length;k++){
+      if(dates.indexOf(entries[k].date)>=0){
+        aeroDays[entries[k].date]=true;
+        totalKcal+=(entries[k].kcal||0);totalMins+=(entries[k].mins||0);totalDist+=(entries[k].dist||0);
+      }
+    }
+  }
+  // Also check legacy aero keys
+  var legacyAero=["tennis_mon","run_wed","tennis_fri","free_sun","aero_ter","aero_qui","aero_sab"];
+  for(var li=0;li<legacyAero.length;li++){
+    var entries=S.data[legacyAero[li]]||[];
+    for(var k=0;k<entries.length;k++){
+      if(dates.indexOf(entries[k].date)>=0){
+        aeroDays[entries[k].date]=true;
+        totalKcal+=(entries[k].kcal||0);totalMins+=(entries[k].mins||0);totalDist+=(entries[k].dist||0);
+      }
+    }
+  }
+  var allDays={};for(var d in gymDays)allDays[d]=true;for(var d in aeroDays)allDays[d]=true;
+  var sessions=Object.keys(allDays).length;
   return {totalKcal:totalKcal,totalMins:totalMins,totalDist:Math.round(totalDist*10)/10,sessions:sessions};
 }
 
@@ -790,6 +991,27 @@ function getExerciseHistory(exId,num){
   for(var i=0;i<entries.length;i++){var mon=getMonday(entries[i].date);if(!weeks[mon]||entries[i].weight>weeks[mon])weeks[mon]=entries[i].weight}
   var allW=Object.keys(weeks).sort().slice(-num);
   return allW.map(function(w){return {week:w,weight:weeks[w]}});
+}
+
+function getWeekVolume(dates){
+  var totalVol=0,exCount=0;
+  var gymKeys=["A","B","C"];
+  for(var gk=0;gk<gymKeys.length;gk++){
+    var wk=GYM[gymKeys[gk]];
+    for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];
+      for(var ei=0;ei<g.exercises.length;ei++){
+        var ex=g.exercises[ei],entries=S.data[ex.id]||[];
+        var sets=parseInt(ex.series)||3,reps=parseInt((ex.series.match(/\u00d7(\d+)/)||["","12"])[1])||12;
+        for(var k=0;k<entries.length;k++){
+          if(dates.indexOf(entries[k].date)>=0){
+            totalVol+=entries[k].weight*sets*reps;
+            exCount++;break;
+          }
+        }
+      }
+    }
+  }
+  return {volume:Math.round(totalVol),exercises:exCount};
 }
 
 function getHistoricalAverages(excludeWeek){
@@ -841,59 +1063,94 @@ function renderReport(){
 
   h+='<div class="section-title">Visao da Semana</div><div class="week-grid">';
   for(var i=0;i<7;i++){
-    var tab=TABS[i],date=dates[i],done=false;
-    if(tab.type==="gym"){
-      var wk=GYM[tab.gymKey];
-      for(var gi=0;gi<wk.groups.length&&!done;gi++){var g=wk.groups[gi];for(var ei=0;ei<g.exercises.length&&!done;ei++){
-        var entries=S.data[g.exercises[ei].id]||[];for(var k=0;k<entries.length;k++){if(entries[k].date===date)done=true}
-      }}
-      if(!done){var ae=S.data[tab.aeroId]||[];for(var k=0;k<ae.length;k++){if(ae[k].date===date)done=true}}
-    }else{var entries=S.data[tab.aeroId]||[];for(var k=0;k<entries.length;k++){if(entries[k].date===date)done=true}}
+    var date=dates[i],done=false;
+    // Check all gym exercises
+    var gymKeys2=["A","B","C"];
+    for(var gk=0;gk<gymKeys2.length&&!done;gk++){
+      var wk2=GYM[gymKeys2[gk]];
+      for(var gi2=0;gi2<wk2.groups.length&&!done;gi2++){var g2=wk2.groups[gi2];
+        for(var ei2=0;ei2<g2.exercises.length&&!done;ei2++){
+          var entries2=S.data[g2.exercises[ei2].id]||[];
+          for(var k2=0;k2<entries2.length;k2++){if(entries2[k2].date===date)done=true}
+        }
+      }
+    }
+    // Check all aero
+    if(!done){
+      var allAero=["aero_a","aero_b","aero_c","atividade","tennis_mon","run_wed","tennis_fri","free_sun","aero_ter","aero_qui","aero_sab"];
+      for(var aa=0;aa<allAero.length&&!done;aa++){
+        var ae2=S.data[allAero[aa]]||[];
+        for(var k2=0;k2<ae2.length;k2++){if(ae2[k2].date===date)done=true}
+      }
+    }
     var isPast=date<=todayStr();
     h+='<div class="day-cell '+(done?"done":isPast?"missed":"")+'">';
-    h+='<div class="dc-day">'+dayNames[i]+'</div><div class="dc-icon">'+tab.icon+'</div>';
+    h+='<div class="dc-day">'+dayNames[i]+'</div><div class="dc-icon">'+(done?"\u2705":"\u2014")+'</div>';
     h+='<div class="dc-status" style="color:'+(done?"var(--green)":"var(--text-light)")+'">'+(done?"\u2713":"\u2014")+'</div></div>';
   }
   h+='</div>';
 
-  function deltaColor(v){return v>0?"var(--green)":v<0?"var(--orange)":"var(--text-light)"}
+  function deltaColor(v){return v>0?"#4CAF50":v<0?"#F44336":"var(--text-light)"}
   function deltaStr(v){return v>0?"+"+v:String(v)}
   function deltaPct(cur,ref){if(!ref||ref===0)return "";var p=Math.round((cur-ref)/ref*100);return (p>0?"+":"")+p+"%"}
   var kd=totals.totalKcal-prev.totalKcal,md=totals.totalMins-prev.totalMins,sd=totals.sessions-prev.sessions,dd=Math.round((totals.totalDist-prev.totalDist)*10)/10;
 
-  h+='<div class="section-title">Resumo vs Semana Anterior</div>';
+  // Volume card (total weight)
+  var vol=getWeekVolume(dates);
+  var prevVol=getWeekVolume(prevDates);
+  var volDiff=vol.volume-prevVol.volume;
+  if(vol.volume>0){
+    h+='<div class="vol-card">';
+    h+='<div class="vol-title">\ud83c\udfcb\ufe0f Volume Total da Semana</div>';
+    h+='<div class="vol-val">'+vol.volume.toLocaleString()+'<span style="font-size:14px;opacity:.7"> kg</span></div>';
+    h+='<div class="vol-sub">'+vol.exercises+' exercicios registrados</div>';
+    if(prevVol.volume>0){
+      h+='<div class="vol-delta" style="color:'+(volDiff>=0?"#81C784":"#EF5350")+'">'+deltaStr(volDiff)+' kg vs semana anterior ('+deltaPct(vol.volume,prevVol.volume)+')</div>';
+      var pct=prevVol.volume>0?Math.min(100,Math.round(vol.volume/prevVol.volume*100)):0;
+      h+='<div class="pbar-wrap"><div class="pbar-fill" style="width:'+pct+'%;background:linear-gradient(90deg,#81C784,#4CAF50)"></div></div>';
+    }
+    h+='</div>';
+  }
+
+  h+='<div class="section-title">\ud83d\udcca Resumo da Semana</div>';
   h+='<div class="summary-cards">';
-  h+='<div class="sum-card"><div class="val" style="color:var(--green)">'+totals.sessions+'/7</div><div class="lbl">Sessoes</div>';
+  h+='<div class="sum-card sc-green"><div class="val" style="color:#4CAF50">'+totals.sessions+'</div><div class="lbl">Sessoes</div>';
   if(prev.sessions>0)h+='<div class="delta" style="color:'+deltaColor(sd)+'">'+deltaStr(sd)+' vs anterior</div>';
+  if(avg)h+='<div class="avg-line">media: '+avg.sessions+'</div>';
   h+='</div>';
-  h+='<div class="sum-card"><div class="val" style="color:var(--orange)">'+totals.totalKcal+'</div><div class="lbl">kcal (aerobico)</div>';
+  h+='<div class="sum-card sc-orange"><div class="val" style="color:#FF9800">'+totals.totalKcal+'</div><div class="lbl">Calorias</div>';
   if(prev.totalKcal>0)h+='<div class="delta" style="color:'+deltaColor(kd)+'">'+deltaStr(kd)+' kcal</div>';
+  if(avg)h+='<div class="avg-line">media: '+avg.kcal+' kcal</div>';
   h+='</div>';
-  h+='<div class="sum-card"><div class="val" style="color:var(--blue)">'+totals.totalDist+'</div><div class="lbl">km percorridos</div>';
+  h+='<div class="sum-card sc-blue"><div class="val" style="color:#1976D2">'+totals.totalDist+'</div><div class="lbl">Distancia (km)</div>';
   if(prev.totalDist>0)h+='<div class="delta" style="color:'+deltaColor(dd)+'">'+deltaStr(dd)+' km</div>';
+  if(avg)h+='<div class="avg-line">media: '+avg.dist+' km</div>';
   h+='</div>';
-  h+='<div class="sum-card"><div class="val" style="color:var(--purple)">'+totals.totalMins+'</div><div class="lbl">min (aerobico)</div>';
+  h+='<div class="sum-card sc-purple"><div class="val" style="color:#7B1FA2">'+totals.totalMins+'</div><div class="lbl">Tempo (min)</div>';
   if(prev.totalMins>0)h+='<div class="delta" style="color:'+deltaColor(md)+'">'+deltaStr(md)+' min</div>';
+  if(avg)h+='<div class="avg-line">media: '+avg.mins+' min</div>';
   h+='</div></div>';
 
-  // === HISTORICAL AVERAGES COMPARISON ===
+  // Historical averages comparison with progress bars
   if(avg&&avg.weeks>=2){
-    h+='<div class="section-title">Vs Media Historica ('+avg.weeks+' semanas)</div>';
-    h+='<div class="summary-cards">';
+    h+='<div class="section-title">\ud83d\udcc8 Vs Media Historica ('+avg.weeks+' sem)</div>';
     var items=[
-      {cur:totals.sessions,avg:avg.sessions,unit:"",lbl:"Sessoes",color:"var(--green)"},
-      {cur:totals.totalKcal,avg:avg.kcal,unit:" kcal",lbl:"Calorias",color:"var(--orange)"},
-      {cur:totals.totalDist,avg:avg.dist,unit:" km",lbl:"Distancia",color:"var(--blue)"},
-      {cur:totals.totalMins,avg:avg.mins,unit:" min",lbl:"Tempo",color:"var(--purple)"}
+      {cur:totals.sessions,avg:avg.sessions,unit:"",lbl:"Sessoes",cls:"sc-green",col:"#4CAF50"},
+      {cur:totals.totalKcal,avg:avg.kcal,unit:" kcal",lbl:"Calorias",cls:"sc-orange",col:"#FF9800"},
+      {cur:totals.totalDist,avg:avg.dist,unit:" km",lbl:"Distancia",cls:"sc-blue",col:"#1976D2"},
+      {cur:totals.totalMins,avg:avg.mins,unit:" min",lbl:"Tempo",cls:"sc-purple",col:"#7B1FA2"}
     ];
+    h+='<div class="summary-cards">';
     for(var ii=0;ii<items.length;ii++){
       var it=items[ii],diff=Math.round((it.cur-it.avg)*10)/10;
       var pct=deltaPct(it.cur,it.avg);
-      h+='<div class="sum-card">';
-      h+='<div class="val" style="color:'+it.color+'">'+it.cur+'</div>';
+      var barPct=it.avg>0?Math.min(120,Math.round(it.cur/it.avg*100)):0;
+      h+='<div class="sum-card '+it.cls+'">';
+      h+='<div class="val" style="color:'+it.col+'">'+it.cur+'</div>';
       h+='<div class="lbl">'+it.lbl+'</div>';
-      h+='<div style="font-size:10px;color:var(--text-light)">media: '+it.avg+it.unit+'</div>';
+      h+='<div class="avg-line">media: '+it.avg+it.unit+'</div>';
       if(diff!==0)h+='<div class="delta" style="color:'+deltaColor(diff)+'">'+deltaStr(diff)+it.unit+' ('+pct+')</div>';
+      h+='<div class="pbar-wrap" style="background:rgba(0,0,0,.06)"><div class="pbar-fill" style="width:'+Math.min(barPct,100)+'%;background:'+it.col+'"></div></div>';
       h+='</div>';
     }
     h+='</div>';
@@ -901,16 +1158,16 @@ function renderReport(){
 
   // Weight progression
   var hasEx=false;
-  for(var gk=0;gk<["TER","QUI","SAB"].length;gk++){
-    var key=["TER","QUI","SAB"][gk],wk=GYM[key];
+  for(var gk=0;gk<["A","B","C"].length;gk++){
+    var key=["A","B","C"][gk],wk=GYM[key];
     for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];for(var ei=0;ei<g.exercises.length;ei++){
       if((S.data[g.exercises[ei].id]||[]).length>0){hasEx=true;break}
     }}}
 
   if(hasEx){
     h+='<div class="section-title">Progressao de Carga</div>';
-    for(var gk=0;gk<["TER","QUI","SAB"].length;gk++){
-      var key=["TER","QUI","SAB"][gk],wk=GYM[key];
+    for(var gk=0;gk<["A","B","C"].length;gk++){
+      var key=["A","B","C"][gk],wk=GYM[key];
       for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];for(var ei=0;ei<g.exercises.length;ei++){
         var ex=g.exercises[ei],hist=getExerciseHistory(ex.id,6);
         if(hist.length===0)continue;
@@ -957,8 +1214,8 @@ function exportReportText(){
   var dates=getWeekDates(R.weekOffset),totals=getWeekTotals(dates);
   var txt="RELATORIO SEMANAL\n"+fmtD(dates[0])+" - "+fmtD(dates[6])+"\n";
   txt+="Sessoes: "+totals.sessions+"/7\nKcal: "+totals.totalKcal+"\nDistancia: "+totals.totalDist+"km\nTempo: "+totals.totalMins+"min\n\n";
-  for(var gk=0;gk<["TER","QUI","SAB"].length;gk++){
-    var key=["TER","QUI","SAB"][gk],wk=GYM[key];
+  for(var gk=0;gk<["A","B","C"].length;gk++){
+    var key=["A","B","C"][gk],wk=GYM[key];
     txt+=wk.title+" ("+wk.day+")\n";
     for(var gi=0;gi<wk.groups.length;gi++){var g=wk.groups[gi];for(var ei=0;ei<g.exercises.length;ei++){
       var ex=g.exercises[ei],entries=S.data[ex.id]||[];
