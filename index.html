@@ -164,22 +164,27 @@ body{font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;background
 .img-modal-overlay img{max-width:92vw;max-height:85vh;border-radius:12px;object-fit:contain}
 .card-img{cursor:pointer}
 .diff-row{display:flex;align-items:center;gap:6px;margin-top:4px}
-.diff-btn{border:none;border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;opacity:.5;transition:all .2s}
-.diff-btn.active{opacity:1;color:#fff}
-.diff-btn:nth-child(2){background:#4CAF50}
-.diff-btn:nth-child(3){background:#FFC107;color:#333!important}
-.diff-btn:nth-child(4){background:#F44336}
+.diff-btn{border:2px solid transparent;border-radius:8px;padding:5px 12px;font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;background:var(--bg);color:var(--text-light)}
+.diff-btn.active{transform:scale(1.1);box-shadow:0 2px 8px rgba(0,0,0,.25);color:#fff}
+.diff-btn[data-lv="facil"]{border-color:#4CAF50}.diff-btn[data-lv="facil"].active{background:#4CAF50;border-color:#4CAF50}
+.diff-btn[data-lv="medio"]{border-color:#FFC107}.diff-btn[data-lv="medio"].active{background:#FFC107;border-color:#FFC107;color:#333!important}
+.diff-btn[data-lv="dificil"]{border-color:#F44336}.diff-btn[data-lv="dificil"].active{background:#F44336;border-color:#F44336}
 .aero-type-row{display:flex;gap:6px;margin:8px 0}
 .aero-type-btn{border:2px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;background:var(--card);transition:all .2s;flex:1;text-align:center}
 .aero-type-btn.active{color:#fff}
+
+.plank-timer-row{display:flex;align-items:center;gap:8px;margin-top:6px}
+.plank-timer-display{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text);min-width:60px;text-align:center}
+.plank-btn{border:none;border-radius:10px;padding:10px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;color:#fff}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 </head>
 <body>
 <div id="app"></div>
 <div id="flash-overlay" class="flash-overlay"></div>
 <div id="floating-timer" style="display:none"></div>
 <script>
-var GYM={"A":{title:"Peito + Tríceps + Abdômen",color:"#2D6A4F",light:"#E8F5E9",type:"gym",groups:[{name:"Peito",exercises:[{id:"chest_press",name:"Supino na máquina (Chest Press)",subs:"Supino reto c/ halteres · Supino reto c/ barra",series:"3×12",pause:"60s",tips:["Costas e quadril colados no encosto — pés firmes no chão", "Empurre à frente sem travar cotovelos; retorne em 3s"],img:"https://fitwill.app/api/image/0577?w=400&h=400"},{id:"peck_deck",name:"Voador (Peck Deck)",subs:"Crucifixo c/ halteres · Crossover na polia",series:"3×12",pause:"45s",tips:["Cotovelos levemente flexionados durante todo o arco", "Feche até as pegadas se encontrarem; abra até leve alongamento"],img:"https://fitwill.app/api/image/2427?w=400&h=400"},{id:"incline_press",name:"Supino inclinado na maquina",subs:"Supino inclinado c/ halteres · Supino inclinado no Smith",series:"3×12",pause:"60s",tips:["Ajuste o banco da maquina a ~30°, costas e quadril bem apoiados","Empurre para cima e a frente sem travar cotovelos; desça controlado ate sentir leve alongamento no peitoral superior","Foco: peitoral superior (clavicular) — segure 1s no topo contraindo"],img:"https://fitwill.app/api/image/1299?w=400&h=400"}]},{name:"Tríceps",exercises:[{id:"tri_machine",name:"Tríceps na máquina (extensão sentado)",subs:"Tríceps pulley c/ barra reta · Tríceps mergulho no graviton",series:"3×12",pause:"45s",tips:["Cotovelos fixos, alinhados com os ombros — não abra", "Estenda completamente; retorne devagar sem bater o peso"],img:"https://fitwill.app/api/image/2198?w=400&h=400"},{id:"tri_pulley",name:"Tríceps pulley com corda",subs:"Tríceps pulley c/ barra reta · Tríceps na máquina",series:"3×12",pause:"45s",tips:["Cotovelos grudados ao corpo — não incline o tronco", "Empurre para baixo e abra as pontas da corda no final"],img:"https://fitwill.app/api/image/2438?w=400&h=400"},{id:"tri_testa",name:"Tríceps testa com halteres (banco reto)",subs:"Tríceps francês unilateral · Mergulho no banco",series:"3×12",pause:"45s",tips:["Deitado no banco, cotovelos apontando para o teto, fixos", "Flexione apenas os cotovelos descendo até a testa; estenda de volta"],img:"https://fitwill.app/api/image/2589?w=400&h=400"}]},{name:"Abdômen",exercises:[{id:"plank_a",name:"Prancha frontal (isometria)",subs:"Prancha com apoio nos joelhos · Prancha com elevação de perna",series:"3×30s",pause:"30s",tips:["Apoie antebraços e pontas dos pés no chão, corpo em linha reta","Contraia abdômen e glúteo — NÃO deixe o quadril subir ou descer","Foco: transverso abdominal + reto abdominal — respire normalmente, não prenda o ar"],img:"https://fitwill.app/api/image/0465?w=400&h=400"}]}]},"B":{title:"Costas + Bíceps + Abdômen",color:"#264653",light:"#E3EFF3",type:"gym",groups:[{name:"Costas",exercises:[{id:"lat_pull",name:"Puxada frontal (Lat Pulldown)",subs:"Puxada no graviton · Puxada c/ triângulo",series:"3×12",pause:"60s",tips:["Pegada pronada, pouco mais larga que os ombros", "Projete o peito para cima ao puxar; estenda totalmente ao voltar"],img:"https://fitwill.app/api/image/0197?w=400&h=400"},{id:"sup_pulldown",name:"Puxada supinada (pegada estreita)",subs:"Puxada no graviton supinada · Rosca direta na barra",series:"3×12",pause:"60s",tips:["Tronco ereto o tempo todo — NÃO balance para trás", "Puxe apertando as escápulas; retorne sentindo o alongamento"],img:"https://fitwill.app/api/image/2491?w=400&h=400"},{id:"machine_row",name:"Remada sentada na maquina",subs:"Remada cavalinho · Remada articulada (Hammer)",series:"3×12",pause:"60s",tips:["Peito apoiado no pad frontal — protege totalmente a lombar","Puxe os pegadores trazendo os cotovelos para tras ate apertar as escapulas; retorne controlado","Foco: dorsal medio, romboides, trapezio medio — mantenha ombros baixos, nao encolha"],img:"https://fitwill.app/api/image/2664?w=400&h=400"},{id:"face_pull",name:"Face Pull na polia (corda)",subs:"Face Pull c/ elástico · Crucifixo inverso",series:"3×15",pause:"45s",tips:["Polia na altura da cabeca, segure a corda com pegada neutra (polegares pra voce)","Puxe a corda em direcao ao rosto, ABRINDO os cotovelos para fora e para cima","Foco: deltoide posterior + trapezio medio + rotadores externos — excelente para postura"],img:"https://fitwill.app/api/image/5656?w=400&h=400"}]},{name:"Bíceps",exercises:[{id:"preacher",name:"Rosca Scott na máquina (Preacher)",subs:"Rosca Scott c/ barra W · Rosca direta c/ halteres",series:"3×12",pause:"45s",tips:["Braços apoiados no pad, axilas na borda superior", "Desça controlando sem estender 100% (protege cotovelo)"],img:"https://fitwill.app/api/image/2660?w=400&h=400"},{id:"bicep_curl",name:"Rosca alternada com halteres",subs:"Rosca na polia baixa · Rosca na máquina",series:"3×12",pause:"45s",tips:["Sentado com encosto para proteger a lombar", "Cotovelo fixo ao lado do corpo — se balançar, reduza o peso"],img:"https://fitwill.app/api/image/0285?w=400&h=400"},{id:"hammer_curl",name:"Rosca martelo com halteres",subs:"Rosca martelo na polia (corda) · Rosca punho neutro",series:"3×12",pause:"45s",tips:["Pegada neutra (palmas voltadas uma para a outra)", "Trabalha braquiorradial + bíceps externo; pode fazer sentado"],img:"https://fitwill.app/api/image/0298?w=400&h=400"}]},{name:"Abdômen",exercises:[{id:"leg_raise_b",name:"Elevação de pernas (banco ou suspenso)",subs:"Abdominal infra no solo · Tesoura deitado",series:"3×15",pause:"30s",tips:["Deitado no banco ou suspenso na barra, pernas estendidas","Eleve as pernas até 90° contraindo o abdômen inferior, desça controlado","Foco: reto abdominal inferior — não use impulso, controle total na descida"],img:"https://fitwill.app/api/image/2530?w=400&h=400"}]}]},"C":{title:"Pernas + Ombros + Abdômen",color:"#C65D3E",light:"#FFF0EB",type:"gym",groups:[{name:"Pernas (adaptado p/ lombar)",exercises:[{id:"leg_ext",name:"Cadeira extensora",subs:"Extensão na polia (caneleira) · Afundo c/ halteres leves",series:"3×15",pause:"60s",tips:["Ajuste o encosto para que o joelho fique alinhado com o eixo de rotacao da maquina","Estenda as pernas totalmente e SEGURE 1s no topo contraindo o quadriceps","Foco: quadriceps (reto femoral + vasto) — desca controlado, nao deixe o peso bater"],img:"https://fitwill.app/api/image/0585?w=400&h=400"},{id:"leg_curl",name:"Mesa flexora (deitado)",subs:"Cadeira flexora (sentado) · Flexão na polia (caneleira)",series:"3×12",pause:"60s",tips:["Deitado de barriga para baixo, quadril colado no banco (nao levante)","Flexione trazendo os calcanhares em direcao ao gluteo; segure 1s no topo","Foco: isquiotibiais + panturrilha — desca em 2-3s controlando a fase negativa"],img:"https://fitwill.app/api/image/2223?w=400&h=400"},{id:"hip_abd",name:"Abdução de quadril (máquina)",subs:"Abdução c/ mini band · Abdução na polia baixa",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, joelhos alinhados com o eixo da maquina","Abra as pernas controlando, segure 1s na abertura maxima","Foco: gluteo medio + minimo — a fase de FECHAR (retorno) tambem trabalha, va devagar"],img:"https://fitwill.app/api/image/0597?w=400&h=400"},{id:"hip_add",name:"Adução de quadril (máquina)",subs:"Adução na polia baixa · Adução c/ bola entre joelhos",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, pernas abertas na posicao inicial da maquina","Feche as pernas controlando, aperte 1s na contracao maxima","Foco: adutor longo + magno — abra devagar ate sentir leve alongamento na regiao interna"],img:"https://fitwill.app/api/image/3612?w=400&h=400"},{id:"calf",name:"Panturrilha sentada (máquina)",subs:"Panturrilha em pé (máquina) · Panturrilha no Smith",series:"3×15",pause:"45s",tips:["Joelhos a 90°, pontas dos pes na plataforma com calcanhares livres","Suba na PONTA dos pes o maximo possivel e segure 2s no topo","Foco: soleo (panturrilha profunda) — desca ABAIXO da plataforma para alongar completamente"],img:"https://fitwill.app/api/image/0594?w=400&h=400"}]},{name:"Ombros",exercises:[{id:"shoulder_press",name:"Desenvolvimento na máquina",subs:"Desenvolvimento c/ halteres sentado · Desenvolvimento no Smith",series:"3×12",pause:"60s",tips:["Ajuste o assento para que os pegadores fiquem na altura dos ombros","Costas apoiadas no encosto a ~80°; empurre para cima sem travar cotovelos","Foco: deltoide anterior + medio + triceps — desca ate cotovelos na linha dos ombros"],img:"https://fitwill.app/api/image/2883?w=400&h=400"},{id:"lat_raise",name:"Elevação lateral (halteres ou cabo)",subs:"Elevação lateral na máquina · Elevação lateral na polia",series:"3×15",pause:"45s",tips:["Em pe ou sentado, halteres ao lado do corpo com leve flexao nos cotovelos","Eleve lateralmente ate a ALTURA dos ombros (nao acima!) com controle total","Foco: deltoide medio (largura dos ombros) — cargas LEVES com execucao perfeita"],img:"https://fitwill.app/api/image/0334?w=400&h=400"}]},{name:"Abdômen",exercises:[{id:"crunch_m",name:"Abdominal na máquina (Crunch)",subs:"Prancha frontal (30-45s) · Abdominal no cabo (polia alta)",series:"3×15",pause:"30s",tips:["Ajuste o assento e o peso; segure os pegadores sem puxar com os bracos","Contraia o ABDOMEN para flexionar o tronco — o movimento vem do core, nao dos bracos","Foco: reto abdominal (parte superior) — expire ao contrair, inspire ao voltar"],img:"https://fitwill.app/api/image/1452?w=400&h=400"},{id:"side_plank",name:"Prancha lateral (isometria)",subs:"Rotação russa c/ peso · Flexão lateral no cabo",series:"3x20s/lado",pause:"30s",tips:["Apoie o antebraco no chao com cotovelo abaixo do ombro; pes empilhados ou defasados","Eleve o quadril formando linha reta dos pes a cabeca — contraia abdomen + gluteo","Foco: obliquos + transverso + quadrado lombar — se 20s for facil, aumente para 30s"],img:"https://fitwill.app/api/image/0715?w=400&h=400"}]}]}};
+var GYM={"A":{title:"Peito + Tríceps + Abdômen",color:"#2D6A4F",light:"#E8F5E9",type:"gym",groups:[{name:"Peito",exercises:[{id:"chest_press",name:"Supino na máquina (Chest Press)",subs:"Supino reto c/ halteres · Supino reto c/ barra",series:"3×12",pause:"60s",tips:["Costas e quadril colados no encosto — pés firmes no chão", "Empurre à frente sem travar cotovelos; retorne em 3s"],img:"https://fitwill.app/api/image/0577?w=400&h=400"},{id:"peck_deck",name:"Voador (Peck Deck)",subs:"Crucifixo c/ halteres · Crossover na polia",series:"3×12",pause:"45s",tips:["Cotovelos levemente flexionados durante todo o arco", "Feche até as pegadas se encontrarem; abra até leve alongamento"],img:"https://fitwill.app/api/image/0596?w=400&h=400"},{id:"incline_press",name:"Supino inclinado na maquina",subs:"Supino inclinado c/ halteres · Supino inclinado no Smith",series:"3×12",pause:"60s",tips:["Ajuste o banco da maquina a ~30°, costas e quadril bem apoiados","Empurre para cima e a frente sem travar cotovelos; desça controlado ate sentir leve alongamento no peitoral superior","Foco: peitoral superior (clavicular) — segure 1s no topo contraindo"],img:"https://fitwill.app/api/image/1299?w=400&h=400"}]},{name:"Tríceps",exercises:[{id:"tri_machine",name:"Tríceps na máquina (extensão sentado)",subs:"Tríceps pulley c/ barra reta · Tríceps mergulho no graviton",series:"3×12",pause:"45s",tips:["Cotovelos fixos, alinhados com os ombros — não abra", "Estenda completamente; retorne devagar sem bater o peso"],img:"https://fitwill.app/api/image/2198?w=400&h=400",vid:"https://lyftaweb.s3.us-east-2.amazonaws.com/GymvisualMP4/14511201.mp4"},{id:"tri_pulley",name:"Tríceps pulley com corda",subs:"Tríceps pulley c/ barra reta · Tríceps na máquina",series:"3×12",pause:"45s",tips:["Cotovelos grudados ao corpo — não incline o tronco", "Empurre para baixo e abra as pontas da corda no final"],img:"https://fitwill.app/api/image/2438?w=400&h=400"},{id:"tri_testa",name:"Tríceps testa com halteres (banco reto)",subs:"Tríceps francês unilateral · Mergulho no banco",series:"3×12",pause:"45s",tips:["Deitado no banco, cotovelos apontando para o teto, fixos", "Flexione apenas os cotovelos descendo até a testa; estenda de volta"],img:"https://fitwill.app/api/image/2589?w=400&h=400"}]},{name:"Abdômen",exercises:[{id:"plank_a",name:"Prancha frontal (isometria)",isPlank:true,subs:"Prancha com apoio nos joelhos · Prancha com elevação de perna",series:"3×30s",pause:"30s",tips:["Apoie antebraços e pontas dos pés no chão, corpo em linha reta","Contraia abdômen e glúteo — NÃO deixe o quadril subir ou descer","Foco: transverso abdominal + reto abdominal — respire normalmente, não prenda o ar"],img:"https://fitwill.app/api/image/0465?w=400&h=400"}]}]},"B":{title:"Costas + Bíceps + Abdômen",color:"#264653",light:"#E3EFF3",type:"gym",groups:[{name:"Costas",exercises:[{id:"lat_pull",name:"Puxada frontal (Lat Pulldown)",subs:"Puxada no graviton · Puxada c/ triângulo",series:"3×12",pause:"60s",tips:["Pegada pronada, pouco mais larga que os ombros", "Projete o peito para cima ao puxar; estenda totalmente ao voltar"],img:"https://fitwill.app/api/image/0197?w=400&h=400"},{id:"sup_pulldown",name:"Puxada supinada (pegada estreita)",subs:"Puxada no graviton supinada · Rosca direta na barra",series:"3×12",pause:"60s",tips:["Tronco ereto o tempo todo — NÃO balance para trás", "Puxe apertando as escápulas; retorne sentindo o alongamento"],img:"https://fitwill.app/api/image/2491?w=400&h=400"},{id:"machine_row",name:"Remada sentada na maquina",subs:"Remada cavalinho · Remada articulada (Hammer)",series:"3×12",pause:"60s",tips:["Peito apoiado no pad frontal — protege totalmente a lombar","Puxe os pegadores trazendo os cotovelos para tras ate apertar as escapulas; retorne controlado","Foco: dorsal medio, romboides, trapezio medio — mantenha ombros baixos, nao encolha"],img:"https://fitwill.app/api/image/2664?w=400&h=400"},{id:"face_pull",name:"Face Pull na polia (corda)",subs:"Face Pull c/ elástico · Crucifixo inverso",series:"3×15",pause:"45s",tips:["Polia na altura da cabeca, segure a corda com pegada neutra (polegares pra voce)","Puxe a corda em direcao ao rosto, ABRINDO os cotovelos para fora e para cima","Foco: deltoide posterior + trapezio medio + rotadores externos — excelente para postura"],img:"https://fitwill.app/api/image/5656?w=400&h=400"}]},{name:"Bíceps",exercises:[{id:"preacher",name:"Rosca Scott na máquina (Preacher)",subs:"Rosca Scott c/ barra W · Rosca direta c/ halteres",series:"3×12",pause:"45s",tips:["Braços apoiados no pad, axilas na borda superior", "Desça controlando sem estender 100% (protege cotovelo)"],img:"https://fitwill.app/api/image/2660?w=400&h=400"},{id:"bicep_curl",name:"Rosca alternada com halteres",subs:"Rosca na polia baixa · Rosca na máquina",series:"3×12",pause:"45s",tips:["Sentado com encosto para proteger a lombar", "Cotovelo fixo ao lado do corpo — se balançar, reduza o peso"],img:"https://fitwill.app/api/image/0285?w=400&h=400"},{id:"hammer_curl",name:"Rosca martelo com halteres",subs:"Rosca martelo na polia (corda) · Rosca punho neutro",series:"3×12",pause:"45s",tips:["Pegada neutra (palmas voltadas uma para a outra)", "Trabalha braquiorradial + bíceps externo; pode fazer sentado"],img:"https://fitwill.app/api/image/0298?w=400&h=400"}]},{name:"Abdômen",exercises:[{id:"leg_raise_b",name:"Elevação de pernas (banco ou suspenso)",subs:"Abdominal infra no solo · Tesoura deitado",series:"3×15",pause:"30s",tips:["Deitado no banco ou suspenso na barra, pernas estendidas","Eleve as pernas até 90° contraindo o abdômen inferior, desça controlado","Foco: reto abdominal inferior — não use impulso, controle total na descida"],img:"https://fitwill.app/api/image/2530?w=400&h=400"}]}]},"C":{title:"Pernas + Ombros + Abdômen",color:"#C65D3E",light:"#FFF0EB",type:"gym",groups:[{name:"Pernas (adaptado p/ lombar)",exercises:[{id:"leg_ext",name:"Cadeira extensora",subs:"Extensão na polia (caneleira) · Afundo c/ halteres leves",series:"3×15",pause:"60s",tips:["Ajuste o encosto para que o joelho fique alinhado com o eixo de rotacao da maquina","Estenda as pernas totalmente e SEGURE 1s no topo contraindo o quadriceps","Foco: quadriceps (reto femoral + vasto) — desca controlado, nao deixe o peso bater"],img:"https://fitwill.app/api/image/0585?w=400&h=400"},{id:"leg_curl",name:"Mesa flexora (deitado)",subs:"Cadeira flexora (sentado) · Flexão na polia (caneleira)",series:"3×12",pause:"60s",tips:["Deitado de barriga para baixo, quadril colado no banco (nao levante)","Flexione trazendo os calcanhares em direcao ao gluteo; segure 1s no topo","Foco: isquiotibiais + panturrilha — desca em 2-3s controlando a fase negativa"],img:"https://fitwill.app/api/image/2223?w=400&h=400"},{id:"hip_abd",name:"Abdução de quadril (máquina)",subs:"Abdução c/ mini band · Abdução na polia baixa",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, joelhos alinhados com o eixo da maquina","Abra as pernas controlando, segure 1s na abertura maxima","Foco: gluteo medio + minimo — a fase de FECHAR (retorno) tambem trabalha, va devagar"],img:"https://fitwill.app/api/image/0597?w=400&h=400"},{id:"hip_add",name:"Adução de quadril (máquina)",subs:"Adução na polia baixa · Adução c/ bola entre joelhos",series:"3×15",pause:"45s",tips:["Sentado com costas apoiadas, pernas abertas na posicao inicial da maquina","Feche as pernas controlando, aperte 1s na contracao maxima","Foco: adutor longo + magno — abra devagar ate sentir leve alongamento na regiao interna"],img:"https://fitwill.app/api/image/3612?w=400&h=400"},{id:"calf",name:"Panturrilha sentada (máquina)",subs:"Panturrilha em pé (máquina) · Panturrilha no Smith",series:"3×15",pause:"45s",tips:["Joelhos a 90°, pontas dos pes na plataforma com calcanhares livres","Suba na PONTA dos pes o maximo possivel e segure 2s no topo","Foco: soleo (panturrilha profunda) — desca ABAIXO da plataforma para alongar completamente"],img:"https://fitwill.app/api/image/0594?w=400&h=400"}]},{name:"Ombros",exercises:[{id:"shoulder_press",name:"Desenvolvimento na máquina",subs:"Desenvolvimento c/ halteres sentado · Desenvolvimento no Smith",series:"3×12",pause:"60s",tips:["Ajuste o assento para que os pegadores fiquem na altura dos ombros","Costas apoiadas no encosto a ~80°; empurre para cima sem travar cotovelos","Foco: deltoide anterior + medio + triceps — desca ate cotovelos na linha dos ombros"],img:"https://fitwill.app/api/image/2883?w=400&h=400"},{id:"lat_raise",name:"Elevação lateral (halteres ou cabo)",subs:"Elevação lateral na máquina · Elevação lateral na polia",series:"3×15",pause:"45s",tips:["Em pe ou sentado, halteres ao lado do corpo com leve flexao nos cotovelos","Eleve lateralmente ate a ALTURA dos ombros (nao acima!) com controle total","Foco: deltoide medio (largura dos ombros) — cargas LEVES com execucao perfeita"],img:"https://fitwill.app/api/image/0334?w=400&h=400"}]},{name:"Abdômen",exercises:[{id:"crunch_m",name:"Abdominal na máquina (Crunch)",subs:"Prancha frontal (30-45s) · Abdominal no cabo (polia alta)",series:"3×15",pause:"30s",tips:["Ajuste o assento e o peso; segure os pegadores sem puxar com os bracos","Contraia o ABDOMEN para flexionar o tronco — o movimento vem do core, nao dos bracos","Foco: reto abdominal (parte superior) — expire ao contrair, inspire ao voltar"],img:"https://fitwill.app/api/image/1452?w=400&h=400"},{id:"side_plank",name:"Prancha lateral (isometria)",subs:"Rotação russa c/ peso · Flexão lateral no cabo",series:"3x20s/lado",pause:"30s",tips:["Apoie o antebraco no chao com cotovelo abaixo do ombro; pes empilhados ou defasados","Eleve o quadril formando linha reta dos pes a cabeca — contraia abdomen + gluteo","Foco: obliquos + transverso + quadrado lombar — se 20s for facil, aumente para 30s"],img:"https://fitwill.app/api/image/0715?w=400&h=400"}]}]}};
 
 
 var TABS=[
@@ -502,6 +507,107 @@ function fmtDateFull(dateStr){
   return getDayName(dateStr)+", "+p[2]+"/"+p[1]+"/"+p[0];
 }
 
+
+// ===== PLANK TIMER =====
+var PLANK={active:false,exId:null,startTime:0,elapsed:0,interval:null};
+function startPlankTimer(exId){
+  if(PLANK.active&&PLANK.exId===exId){stopPlankTimer();return}
+  stopPlankTimer();
+  PLANK.active=true;PLANK.exId=exId;PLANK.startTime=Date.now();PLANK.elapsed=0;
+  requestWakeLock();
+  var ctx=getAudioCtx();if(ctx&&ctx.state==="suspended")ctx.resume();
+  PLANK.interval=setInterval(function(){
+    PLANK.elapsed=Math.floor((Date.now()-PLANK.startTime)/1000);
+    var el=document.getElementById("plank-display-"+exId);
+    if(el)el.textContent=PLANK.elapsed+"s";
+    // Beep every 30 seconds
+    if(PLANK.elapsed>0&&PLANK.elapsed%30===0){
+      var ctx2=getAudioCtx();if(ctx2){try{var o=ctx2.createOscillator();var g=ctx2.createGain();o.connect(g);g.connect(ctx2.destination);o.type="sine";o.frequency.value=660;g.gain.value=0.2;o.start();setTimeout(function(){o.stop()},150)}catch(e){}}
+    }
+  },200);
+  render();
+}
+function stopPlankTimer(){
+  if(PLANK.interval){clearInterval(PLANK.interval);PLANK.interval=null}
+  var elapsed=PLANK.elapsed;
+  if(PLANK.active&&PLANK.exId&&elapsed>0){
+    S.wts[PLANK.exId]=String(elapsed);
+  }
+  PLANK.active=false;PLANK.exId=null;PLANK.elapsed=0;
+  releaseWakeLock();
+}
+
+
+// ===== FINALIZAR FICHA =====
+function doFinalize(tabKey){
+  var tabObj=null;for(var i=0;i<TABS.length;i++){if(TABS[i].key===tabKey)tabObj=TABS[i]}
+  if(!tabObj||tabObj.type!=="gym")return;
+  var wk=GYM[tabObj.gymKey];
+  var t=getSaveDate();
+  // First save current workout
+  doSaveGym();
+  // Build PDF content
+  var lines=[];
+  lines.push({t:"title",v:wk.title+" — "+fmtDateFull(t)});
+  lines.push({t:"space"});
+  for(var gi=0;gi<wk.groups.length;gi++){
+    var g=wk.groups[gi];
+    lines.push({t:"group",v:g.name});
+    for(var ei=0;ei<g.exercises.length;ei++){
+      var ex=g.exercises[ei];
+      var last=getLast(ex.id);
+      var diff=getDifficulty(ex.id);
+      var obs="";var obsEntries=S.data["obs_"+ex.id]||[];
+      if(obsEntries.length>0)obs=obsEntries[obsEntries.length-1].text||"";
+      var weightStr=last?(ex.isPlank?last.weight+"s":last.weight+"kg"):"—";
+      var diffStr=diff?(" | "+diff.charAt(0).toUpperCase()+diff.slice(1)):"";
+      lines.push({t:"ex",name:ex.name,series:ex.series,weight:weightStr,diff:diffStr,obs:obs});
+    }
+  }
+  // Generate PDF
+  try{
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({unit:"mm",format:"a4"});
+    var y=20;var pw=170;
+    doc.setFont("helvetica","bold");doc.setFontSize(16);
+    doc.setTextColor(74,20,140);
+    doc.text(lines[0].v,20,y);y+=10;
+    for(var i=2;i<lines.length;i++){
+      var ln=lines[i];
+      if(y>270){doc.addPage();y=20}
+      if(ln.t==="group"){
+        y+=4;doc.setFontSize(12);doc.setFont("helvetica","bold");doc.setTextColor(33,33,33);
+        doc.text(ln.v,20,y);y+=2;
+        doc.setDrawColor(74,20,140);doc.line(20,y,190,y);y+=6;
+      }else if(ln.t==="ex"){
+        doc.setFontSize(10);doc.setFont("helvetica","normal");doc.setTextColor(33,33,33);
+        doc.text(ln.name,24,y);
+        doc.setFont("helvetica","bold");
+        doc.text(ln.weight,130,y);
+        doc.setFont("helvetica","normal");doc.setTextColor(100,100,100);
+        doc.text(ln.series+ln.diff,155,y);y+=5;
+        if(ln.obs){doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text("Obs: "+ln.obs,28,y);y+=4}
+      }
+    }
+    var pdfBlob=doc.output("blob");
+    var pdfUrl=URL.createObjectURL(pdfBlob);
+    // Show share modal
+    var fname="Treino_"+tabKey+"_"+t+".pdf";
+    doc.save(fname);
+    // WhatsApp share suggestion
+    var msg=encodeURIComponent("Meu treino "+wk.title+" de "+fmtDateFull(t)+" finalizado!");
+    setTimeout(function(){
+      if(confirm("Treino salvo como PDF!\n\nDeseja compartilhar pelo WhatsApp?")){
+        window.open("https://api.whatsapp.com/send?text="+msg,"_blank");
+      }
+    },500);
+  }catch(e){
+    flash("Erro ao gerar PDF: "+e.message);
+  }
+  flash("\u2705 Ficha "+tabKey+" finalizada!");
+  render();
+}
+
 function flash(m){S.toast=m;render();setTimeout(function(){S.toast=null;render()},2500)}
 function getLast(id){var e=S.data[id];return e&&e.length?e[e.length-1]:null}
 function getHist(id){return(S.data[id]||[]).slice(-10)}
@@ -606,6 +712,15 @@ function doSaveGym(){
         var w=parseFloat(v),idx=-1;
         for(var k=0;k<nd[ex.id].length;k++){if(nd[ex.id][k].date===t){idx=k;break}}
         if(idx>=0)nd[ex.id][idx]={date:t,weight:w};else nd[ex.id].push({date:t,weight:w});
+      }
+      // Save difficulty level
+      var curDiff=getDifficulty(ex.id);
+      if(curDiff){
+        var dk="diff_"+ex.id;
+        if(!nd[dk])nd[dk]=[];
+        var didx=-1;for(var k=0;k<nd[dk].length;k++){if(nd[dk][k].date===t){didx=k;break}}
+        if(didx>=0)nd[dk][didx]={date:t,level:curDiff};else nd[dk].push({date:t,level:curDiff});
+        if(nd[dk].length>30)nd[dk]=nd[dk].slice(-30);
       }
       // Save observation if filled
       var obsText=S.obs&&S.obs[ex.id]||"";
@@ -826,7 +941,11 @@ function render(){
         var last=getLast(ex.id),prog=getProg(ex.id),hist=getHist(ex.id),isO=S.hist===ex.id;
         var cv=S.wts[ex.id]||"";
         h+='<div class="card" id="card-'+ex.id+'"><div class="card-main">';
-        h+='<img class="card-img" src="'+ex.img+'" alt="'+ex.name+'" onclick="showImgModal(this.src)" onerror="this.src=\'\';this.style.background=\''+wk.light+'\';this.style.display=\'flex\';this.style.alignItems=\'center\';this.style.justifyContent=\'center\';this.alt=\'\ud83c\udfcb\ufe0f\'">';
+        if(ex.vid){
+          h+='<video class="card-img" src="'+ex.vid+'" autoplay loop muted playsinline onclick="showImgModal(ex.img)" style="object-fit:cover"></video>';
+        }else{
+          h+='<img class="card-img" src="'+ex.img+'" alt="'+ex.name+'" onclick="showImgModal(this.src)" onerror="this.src=\'\';this.style.background=\''+wk.light+'\';this.style.display=\'flex\';this.style.alignItems=\'center\';this.style.justifyContent=\'center\';this.alt=\'\ud83c\udfcb\ufe0f\'">';
+        }
         h+='<div class="card-body"><div class="ex-name">'+ex.name+'</div>';
         h+='<div class="ex-subs"><i>Alt:</i> '+ex.subs+'</div>';
         h+='<div class="ex-meta"><span class="badge" style="background:'+wk.light+';color:'+c+'">'+ex.series+'</span>';
@@ -834,39 +953,63 @@ function render(){
         // Difficulty level
         var curDiff=getDifficulty(ex.id);
         h+='<div class="diff-row"><span style="font-size:10px;color:var(--text-light)">Dificuldade:</span>';
-        h+='<button class="diff-btn'+(curDiff==="facil"?" active":"")+'" onclick="setDifficulty(\''+ex.id+'\',\'facil\')">Facil</button>';
-        h+='<button class="diff-btn'+(curDiff==="medio"?" active":"")+'" onclick="setDifficulty(\''+ex.id+'\',\'medio\')">Medio</button>';
-        h+='<button class="diff-btn'+(curDiff==="dificil"?" active":"")+'" onclick="setDifficulty(\''+ex.id+'\',\'dificil\')">Dificil</button>';
+        h+='<button class="diff-btn'+(curDiff==="facil"?" active":"")+'" data-lv="facil" onclick="setDifficulty(\''+ex.id+'\',\'facil\')">Facil</button>';
+        h+='<button class="diff-btn'+(curDiff==="medio"?" active":"")+'" data-lv="medio" onclick="setDifficulty(\''+ex.id+'\',\'medio\')">Medio</button>';
+        h+='<button class="diff-btn'+(curDiff==="dificil"?" active":"")+'" data-lv="dificil" onclick="setDifficulty(\''+ex.id+'\',\'dificil\')">Dificil</button>';
         h+='</div>';
         h+='<div class="tips">';
         for(var ti2=0;ti2<ex.tips.length;ti2++){h+='<div class="tip">'+ex.tips[ti2]+'</div>'}
         h+='</div></div></div>';
-        h+='<div class="weight-row"><div class="weight-left">';
-        h+='<span class="weight-label">Peso:</span>';
-        h+='<input type="number" inputmode="decimal" step="0.5" min="0" class="w-input"';
-        h+=' placeholder="'+(last?last.weight:"\u2014")+'" value="'+cv+'"';
-        h+=' oninput="S.wts[\''+ex.id+'\']=this.value" style="'+(cv?"border-color:"+c:"")+'">';
-        h+='<span class="kg">kg</span></div>';
-        if(last){
-          var pc=prog==="up"?"prog-up":prog==="down"?"prog-down":"";
-          var ar=prog==="up"?"\u2191":prog==="down"?"\u2193":prog==="same"?"=":"";
-          // Show weight delta with color
-          var deltaInfo="";
-          if(hist.length>=2){
-            var prevW=hist[hist.length-2].weight;
-            var curW=last.weight;
-            var wd=curW-prevW;
-            if(wd!==0){
-              var wdc=wd>0?"var(--green)":"var(--orange)";
-              var wds=wd>0?"+":"";
-              deltaInfo='<span class="weight-delta" style="color:'+wdc+'">'+wds+wd.toFixed(1)+'kg</span>';
-              deltaInfo+='<span class="weight-prev">(antes: '+prevW+'kg)</span>';
-            }
+        // Weight or Time input (plank uses time)
+        if(ex.isPlank){
+          h+='<div class="weight-row"><div class="weight-left">';
+          h+='<span class="weight-label">Tempo:</span>';
+          h+='<input type="number" inputmode="numeric" step="1" min="0" class="w-input"';
+          h+=' placeholder="'+(last?last.weight:"\u2014")+'" value="'+cv+'"';
+          h+=' oninput="S.wts[\''+ex.id+'\']=this.value" style="'+(cv?"border-color:"+c:"")+'">';
+          h+='<span class="kg">seg</span></div>';
+          if(last){
+            h+='<button class="last-btn" onclick="S.hist=S.hist===\''+ex.id+'\'?null:\''+ex.id+'\';render()">';
+            h+='Ultimo: '+last.weight+'s <span style="font-size:9px;margin-left:2px">'+(isO?"\u25b2":"\u25bc")+'</span></button>';
           }
-          h+='<button class="last-btn '+pc+'" onclick="S.hist=S.hist===\''+ex.id+'\'?null:\''+ex.id+'\';render()">';
-          h+=ar+' '+last.weight+'kg '+deltaInfo+' <span style="font-size:9px;margin-left:2px">'+(isO?"\u25b2":"\u25bc")+'</span></button>';
+          h+='</div>';
+          // Plank timer
+          var plankActive=PLANK.active&&PLANK.exId===ex.id;
+          h+='<div class="plank-timer-row">';
+          if(plankActive){
+            h+='<span id="plank-display-'+ex.id+'" class="plank-timer-display" style="color:'+c+'">'+PLANK.elapsed+'s</span>';
+            h+='<button class="plank-btn" style="background:#F44336" onclick="stopPlankTimer();render()">\u23F9 Parar</button>';
+          }else{
+            h+='<button class="plank-btn" style="background:'+c+'" onclick="startPlankTimer(\''+ex.id+'\')">\u23F1 Iniciar Cronometro</button>';
+          }
+          h+='</div>';
+        }else{
+          h+='<div class="weight-row"><div class="weight-left">';
+          h+='<span class="weight-label">Peso:</span>';
+          h+='<input type="number" inputmode="decimal" step="0.5" min="0" class="w-input"';
+          h+=' placeholder="'+(last?last.weight:"\u2014")+'" value="'+cv+'"';
+          h+=' oninput="S.wts[\''+ex.id+'\']=this.value" style="'+(cv?"border-color:"+c:"")+'">';
+          h+='<span class="kg">kg</span></div>';
+          if(last){
+            var pc=prog==="up"?"prog-up":prog==="down"?"prog-down":"";
+            var ar=prog==="up"?"\u2191":prog==="down"?"\u2193":prog==="same"?"=":"";
+            var deltaInfo="";
+            if(hist.length>=2){
+              var prevW=hist[hist.length-2].weight;
+              var curW=last.weight;
+              var wd=curW-prevW;
+              if(wd!==0){
+                var wdc=wd>0?"var(--green)":"var(--orange)";
+                var wds=wd>0?"+":"";
+                deltaInfo='<span class="weight-delta" style="color:'+wdc+'">'+wds+wd.toFixed(1)+'kg</span>';
+                deltaInfo+='<span class="weight-prev">(antes: '+prevW+'kg)</span>';
+              }
+            }
+            h+='<button class="last-btn '+pc+'" onclick="S.hist=S.hist===\''+ex.id+'\'?null:\''+ex.id+'\';render()">';
+            h+=ar+' '+last.weight+'kg '+deltaInfo+' <span style="font-size:9px;margin-left:2px">'+(isO?"\u25b2":"\u25bc")+'</span></button>';
+          }
+          h+='</div>';
         }
-        h+='</div>';
         // Observation field
         var obsVal=S.obs&&S.obs[ex.id]||"";
         var lastObs="";var obsEntries=S.data["obs_"+ex.id]||[];
@@ -915,6 +1058,7 @@ function render(){
     // Aerobic section for gym days
     h+=renderAeroCard(tabObj.aeroId,c,false,true);
     h+='<button class="save-btn" style="background:'+c+'" onclick="doSaveGym()">Salvar Treino</button>';
+    h+='<button class="save-btn" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);margin-top:8px" onclick="doFinalize(\''+tabObj.key+'\')">\ud83c\udfc1 Finalizar Ficha '+tabObj.key+' (PDF + WhatsApp)</button>';
 
   } else {
     // Activity tab with type selector
