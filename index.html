@@ -169,9 +169,7 @@ body{font-family:-apple-system,'SF Pro Display','Segoe UI',sans-serif;background
 .diff-btn[data-lv="facil"]{border-color:#4CAF50}.diff-btn[data-lv="facil"].active{background:#4CAF50;border-color:#4CAF50}
 .diff-btn[data-lv="medio"]{border-color:#FFC107}.diff-btn[data-lv="medio"].active{background:#FFC107;border-color:#FFC107;color:#333!important}
 .diff-btn[data-lv="dificil"]{border-color:#F44336}.diff-btn[data-lv="dificil"].active{background:#F44336;border-color:#F44336}
-.aero-type-row{display:flex;gap:6px;margin:8px 0}
-.aero-type-btn{border:2px solid var(--border);border-radius:10px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;background:var(--card);transition:all .2s;flex:1;text-align:center}
-.aero-type-btn.active{color:#fff}
+
 
 .plank-timer-row{display:flex;align-items:center;gap:8px;margin-top:6px}
 .plank-timer-display{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--text);min-width:60px;text-align:center}
@@ -544,68 +542,156 @@ function doFinalize(tabKey){
   if(!tabObj||tabObj.type!=="gym")return;
   var wk=GYM[tabObj.gymKey];
   var t=getSaveDate();
-  // First save current workout
   doSaveGym();
-  // Build PDF content
-  var lines=[];
-  lines.push({t:"title",v:wk.title+" — "+fmtDateFull(t)});
-  lines.push({t:"space"});
-  for(var gi=0;gi<wk.groups.length;gi++){
-    var g=wk.groups[gi];
-    lines.push({t:"group",v:g.name});
-    for(var ei=0;ei<g.exercises.length;ei++){
-      var ex=g.exercises[ei];
-      var last=getLast(ex.id);
-      var diff=getDifficulty(ex.id);
-      var obs="";var obsEntries=S.data["obs_"+ex.id]||[];
-      if(obsEntries.length>0)obs=obsEntries[obsEntries.length-1].text||"";
-      var weightStr=last?(ex.isPlank?last.weight+"s":last.weight+"kg"):"—";
-      var diffStr=diff?(" | "+diff.charAt(0).toUpperCase()+diff.slice(1)):"";
-      lines.push({t:"ex",name:ex.name,series:ex.series,weight:weightStr,diff:diffStr,obs:obs});
-    }
+
+  // Check jsPDF loaded
+  if(!window.jspdf||!window.jspdf.jsPDF){
+    flash("\u2717 Biblioteca PDF nao carregou. Verifique sua conexao e tente novamente.");return;
   }
-  // Generate PDF
+
   try{
-    var jsPDF=window.jspdf.jsPDF;
-    var doc=new jsPDF({unit:"mm",format:"a4"});
-    var y=20;var pw=170;
-    doc.setFont("helvetica","bold");doc.setFontSize(16);
-    doc.setTextColor(74,20,140);
-    doc.text(lines[0].v,20,y);y+=10;
-    for(var i=2;i<lines.length;i++){
-      var ln=lines[i];
-      if(y>270){doc.addPage();y=20}
-      if(ln.t==="group"){
-        y+=4;doc.setFontSize(12);doc.setFont("helvetica","bold");doc.setTextColor(33,33,33);
-        doc.text(ln.v,20,y);y+=2;
-        doc.setDrawColor(74,20,140);doc.line(20,y,190,y);y+=6;
-      }else if(ln.t==="ex"){
-        doc.setFontSize(10);doc.setFont("helvetica","normal");doc.setTextColor(33,33,33);
-        doc.text(ln.name,24,y);
-        doc.setFont("helvetica","bold");
-        doc.text(ln.weight,130,y);
-        doc.setFont("helvetica","normal");doc.setTextColor(100,100,100);
-        doc.text(ln.series+ln.diff,155,y);y+=5;
-        if(ln.obs){doc.setFontSize(8);doc.setTextColor(120,120,120);doc.text("Obs: "+ln.obs,28,y);y+=4}
+    var doc=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+    var y=20;
+    // Header
+    doc.setFillColor(74,20,140);doc.rect(0,0,210,30,"F");
+    doc.setFont("helvetica","bold");doc.setFontSize(18);doc.setTextColor(255,255,255);
+    doc.text(wk.title,15,18);
+    doc.setFontSize(10);doc.setTextColor(200,200,255);
+    doc.text(fmtDateFull(t),15,25);
+    y=40;
+
+    for(var gi=0;gi<wk.groups.length;gi++){
+      var g=wk.groups[gi];
+      if(y>260){doc.addPage();y=20}
+      // Group header
+      doc.setFillColor(240,240,250);doc.rect(15,y-4,180,8,"F");
+      doc.setFont("helvetica","bold");doc.setFontSize(11);doc.setTextColor(74,20,140);
+      doc.text(g.name,18,y+1);y+=10;
+
+      for(var ei=0;ei<g.exercises.length;ei++){
+        if(y>270){doc.addPage();y=20}
+        var ex=g.exercises[ei];
+        var last=getLast(ex.id);
+        var diff=getDifficulty(ex.id);
+        var obs="";var obsEntries=S.data["obs_"+ex.id]||[];
+        if(obsEntries.length>0)obs=obsEntries[obsEntries.length-1].text||"";
+        var weightStr=last?(ex.isPlank?last.weight+"s":last.weight+"kg"):"\u2014";
+        var diffLabel=diff?(diff==="facil"?"Facil":diff==="medio"?"Medio":"Dificil"):"";
+
+        // Exercise name
+        doc.setFont("helvetica","bold");doc.setFontSize(10);doc.setTextColor(33,33,33);
+        doc.text(ex.name,20,y);
+        // Weight
+        doc.setFont("helvetica","bold");doc.setFontSize(12);
+        doc.text(weightStr,150,y);
+        // Series
+        doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(120,120,120);
+        doc.text(ex.series,175,y);
+        y+=4;
+        // Difficulty badge
+        if(diffLabel){
+          var dc=diff==="facil"?[76,175,80]:diff==="medio"?[255,193,7]:[244,67,54];
+          doc.setFillColor(dc[0],dc[1],dc[2]);doc.roundedRect(20,y-3,18,5,1,1,"F");
+          doc.setFontSize(7);doc.setTextColor(255,255,255);
+          doc.text(diffLabel,22,y);y+=3;
+        }
+        // Observation
+        if(obs){doc.setFontSize(7);doc.setTextColor(150,150,150);doc.text("Obs: "+obs,24,y);y+=3}
+        y+=3;
+      }
+      y+=4;
+    }
+
+    // Footer
+    doc.setFontSize(7);doc.setTextColor(180,180,180);
+    doc.text("Gerado por App de Treino \u2022 "+new Date().toLocaleString("pt-BR"),15,290);
+
+    var fname="Treino_"+tabKey+"_"+t+".pdf";
+
+    // Mobile-friendly download
+    if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+      var blob=doc.output("blob");
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement("a");a.href=url;a.download=fname;a.target="_blank";
+      document.body.appendChild(a);a.click();
+      setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},1000);
+    }else{
+      doc.save(fname);
+    }
+
+    var msg=encodeURIComponent("\ud83c\udfcb\ufe0f *"+wk.title+"* finalizado!\n\ud83d\udcc5 "+fmtDateFull(t)+"\n\nTreino completo! PDF salvo.");
+    setTimeout(function(){
+      if(confirm("PDF do treino salvo!\n\nDeseja compartilhar pelo WhatsApp?")){
+        window.open("https://wa.me/?text="+msg,"_blank");
+      }
+    },800);
+    flash("\u2705 Ficha "+tabKey+" finalizada!");
+  }catch(e){
+    flash("\u2717 Erro PDF: "+e.message);
+    console.error("PDF Error:",e);
+  }
+}
+
+function doFinalizeAtiv(){
+  var t=getSaveDate();
+  doSaveAero();
+
+  if(!window.jspdf||!window.jspdf.jsPDF){
+    flash("\u2717 Biblioteca PDF nao carregou.");return;
+  }
+  try{
+    var doc=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+    // Header
+    doc.setFillColor(123,45,142);doc.rect(0,0,210,30,"F");
+    doc.setFont("helvetica","bold");doc.setFontSize(18);doc.setTextColor(255,255,255);
+    doc.text("Atividade",15,18);
+    doc.setFontSize(10);doc.setTextColor(200,200,255);
+    doc.text(fmtDateFull(t),15,25);
+    var y=45;
+
+    // Activity details
+    var tipo=S.aero.tipo||S.aero.act||"Atividade";
+    doc.setFont("helvetica","bold");doc.setFontSize(14);doc.setTextColor(33,33,33);
+    doc.text("Tipo: "+tipo,20,y);y+=10;
+
+    var fields=[
+      {label:"Distancia",val:S.aero.dist,unit:"km"},
+      {label:"Tempo",val:S.aero.mins,unit:"min"},
+      {label:"Calorias",val:S.aero.kcal,unit:"kcal"}
+    ];
+    for(var fi=0;fi<fields.length;fi++){
+      var fld=fields[fi];
+      if(fld.val&&parseFloat(fld.val)>0){
+        doc.setFont("helvetica","normal");doc.setFontSize(11);doc.setTextColor(80,80,80);
+        doc.text(fld.label+": ",20,y);
+        doc.setFont("helvetica","bold");doc.setTextColor(33,33,33);
+        doc.text(fld.val+" "+fld.unit,55,y);y+=8;
       }
     }
-    var pdfBlob=doc.output("blob");
-    var pdfUrl=URL.createObjectURL(pdfBlob);
-    // Show share modal
-    var fname="Treino_"+tabKey+"_"+t+".pdf";
-    doc.save(fname);
-    // WhatsApp share suggestion
-    var msg=encodeURIComponent("Meu treino "+wk.title+" de "+fmtDateFull(t)+" finalizado!");
+
+    doc.setFontSize(7);doc.setTextColor(180,180,180);
+    doc.text("Gerado por App de Treino \u2022 "+new Date().toLocaleString("pt-BR"),15,290);
+
+    var fname="Atividade_"+t+".pdf";
+    if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+      var blob=doc.output("blob");
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement("a");a.href=url;a.download=fname;a.target="_blank";
+      document.body.appendChild(a);a.click();
+      setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url)},1000);
+    }else{doc.save(fname)}
+
+    var msg=encodeURIComponent("\u26a1 *Atividade* finalizada!\n\ud83d\udcc5 "+fmtDateFull(t)+"\nTipo: "+tipo+(S.aero.dist?"\n\ud83d\udccd "+S.aero.dist+"km":"")+( S.aero.mins?"\n\u23f1 "+S.aero.mins+"min":"")+( S.aero.kcal?"\n\ud83d\udd25 "+S.aero.kcal+"kcal":""));
     setTimeout(function(){
-      if(confirm("Treino salvo como PDF!\n\nDeseja compartilhar pelo WhatsApp?")){
-        window.open("https://api.whatsapp.com/send?text="+msg,"_blank");
+      if(confirm("PDF da atividade salvo!\n\nDeseja compartilhar pelo WhatsApp?")){
+        window.open("https://wa.me/?text="+msg,"_blank");
       }
-    },500);
+    },800);
+    flash("\u2705 Atividade finalizada!");
   }catch(e){
-    flash("Erro ao gerar PDF: "+e.message);
+    flash("\u2717 Erro PDF: "+e.message);
+    console.error("PDF Error:",e);
   }
-  flash("\u2705 Ficha "+tabKey+" finalizada!");
-  render();
 }
 
 function flash(m){S.toast=m;render();setTimeout(function(){S.toast=null;render()},2500)}
@@ -1061,7 +1147,7 @@ function render(){
     h+='<button class="save-btn" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);margin-top:8px" onclick="doFinalize(\''+tabObj.key+'\')">\ud83c\udfc1 Finalizar Ficha '+tabObj.key+' (PDF + WhatsApp)</button>';
 
   } else {
-    // Activity tab with type selector
+    // Activity tab
     h+='<div class="aero-hero"><div class="aero-emoji">'+tabObj.icon+'</div>';
     h+='<div class="wk-title" style="color:'+c+';padding:0">Atividade</div>';
     h+='<div class="aero-desc">Selecione o tipo e registre</div></div>';
@@ -1069,16 +1155,9 @@ function render(){
     h+='<div class="date-picker-row"><label>\ud83d\udcc5</label>';
     h+='<input type="date" value="'+getSaveDate()+'" onchange="setSaveDate(this.value)">';
     h+='<span style="font-size:12px;font-weight:600;color:'+c+'">'+getDayName(getSaveDate())+'</span></div>';
-    // Activity type buttons
-    var aeroTypes=[{k:"tenis",label:"\ud83c\udfbe Tenis",col:"#7B2D8E"},{k:"corrida",label:"\ud83c\udfc3 Corrida",col:"#00796B"},{k:"caminhada",label:"\ud83d\udeb6 Caminhada",col:"#795548"},{k:"misto",label:"\u26a1 Misto",col:"#E65100"}];
-    h+='<div class="aero-type-row">';
-    for(var at=0;at<aeroTypes.length;at++){
-      var sel=S.aero.tipo===aeroTypes[at].k;
-      h+='<div class="aero-type-btn'+(sel?" active":"")+'" style="'+(sel?"background:"+aeroTypes[at].col+";border-color:"+aeroTypes[at].col:"")+'" onclick="S.aero.tipo=\''+aeroTypes[at].k+'\';render()">'+aeroTypes[at].label+'</div>';
-    }
-    h+='</div>';
     h+=renderAeroCard(tabObj.aeroId,c,true,false);
     h+='<button class="save-btn" style="background:'+c+'" onclick="doSaveAero()">Salvar Atividade</button>';
+    h+='<button class="save-btn" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);margin-top:8px" onclick="doFinalizeAtiv()">\ud83c\udfc1 Finalizar Atividade (PDF + WhatsApp)</button>';
   }
 
   if(S.toast)h+='<div class="toast">'+S.toast+'</div>';
